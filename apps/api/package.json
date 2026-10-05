@@ -1,0 +1,34 @@
+{
+  "name": "@essay/api",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "predev": "node -e \"require('fs').mkdirSync('../web/dist',{recursive:true})\"",
+    "dev": "wrangler dev --port 8787",
+    "deploy": "wrangler deploy",
+    "typecheck": "tsc -p . && tsc -p scripts",
+    "test": "vitest run",
+    "cf-typegen": "wrangler types --include-runtime false",
+    "db:generate": "drizzle-kit generate",
+    "db:migrate:local": "wrangler d1 migrations apply essay-eval --local",
+    "db:migrate:remote": "wrangler d1 migrations apply essay-eval --remote",
+    "db:seed:local": "wrangler d1 execute essay-eval --local --file seed/demo.sql",
+    "db:seed:remote": "wrangler d1 execute essay-eval --remote --file seed/demo.sql",
+    "db:import-legacy": "tsx scripts/import-legacy.ts"
+  },
+  "dependencies": {
+    "@essay/domain": "workspace:*",
+    "@hono/zod-validator": "^0.9.1",
+    "drizzle-orm": "^0.45.3",
+    "hono": "^4.13.13",
+    "zod": "^4.6.5"
+  },
+  "devDependencies": {
+    "@cloudflare/workers-types": "^5.20261005.1",
+    "@types/node": "^24.13.3",
+    "drizzle-kit": "^0.31.11",
+    "tsx": "^4.23.15",
+    "vitest": "^5.0.3",
+    "wrangler": "^4.147.0"
+  }
+}

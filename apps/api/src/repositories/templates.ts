@@ -1,0 +1,46 @@
+import type { Subject, Template, TemplateDraft } from '@essay/domain';
+import { desc, eq, inArray } from 'drizzle-orm';
+import type { Database } from '../db/client';
+import { toTemplate } from '../db/mappers';
+import { essays, templates } from '../db/schema';
+import { notFound } from '../lib/errors';
+import { newId, now } from '../lib/ids';
+
+export async function listTemplates(db: Database, subject?: Subject): Promise<Template[]> {
+  const rows = await db
+    .select({ template: templates, sourceTitle: essays.title })
+    .from(templates)
+    .leftJoin(essays, eq(essays.id, templates.sourceEssayId))
+    .where(subject ? eq(templates.subject, subject) : undefined)
+    .orderBy(desc(templates.createdAt));
+  return rows.map((row) => toTemplate(row.template, row.sourceTitle));
+}
+
+export interface TemplateCandidate<S extends Subject> extends TemplateDraft<S> {
+  source: { essayId: string; title: string };
+}
+
+/** 插入新句式；同科目下已存在的句式被跳过。返回实际新增的条目。 */
+export async function insertTemplates<S extends Subject>(db: Database, subject: S, candidates: TemplateCandidate<S>[]): Promise<Template[]> {
+  if (!candidates.length) return [];
+  const createdAt = now();
+  const rows = candidates.map(({ source, ...draft }) => ({ ...draft, id: newId('template'), subject, sourceEssayId: source.essayId, createdAt }));
+  const titles = new Map(candidates.map((item) => [item.source.essayId, item.source.title]));
+  // 逐条插入并忽略重复（D1 单条语句的绑定参数有上限），整体放在一个批次里
+  const [first, ...rest] = rows.map((row) => db.insert(templates).values(row).onConflictDoNothing().returning());
+  const inserted = await db.batch([first!, ...rest]);
+  return inserted.flat().map((row) => toTemplate(row, row.sourceEssayId ? (titles.get(row.sourceEssayId) ?? null) : null));
+}
+
+export async function deleteTemplate(db: Database, id: string): Promise<void> {
+  const deleted = await db.delete(templates).where(eq(templates.id, id)).returning({ id: templates.id });
+  if (!deleted.length) throw notFound('模板');
+}
+
+export async function findEssaysForExtraction(db: Database, subject: Subject, essayIds?: string[]) {
+  return db.query.essays.findMany({
+    columns: { id: true, title: true, type: true, prompt: true, content: true, subject: true },
+    where: essayIds ? inArray(essays.id, essayIds) : eq(essays.subject, subject),
+    orderBy: desc(essays.updatedAt),
+  });
+}
