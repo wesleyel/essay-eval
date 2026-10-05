@@ -43,14 +43,42 @@ describe('evaluationOutput', () => {
 describe('inspirationOutput / templatesOutput', () => {
   it('drops invalid items instead of failing', () => {
     const report = inspirationOutput('english').parse({
-      extractedSentences: [{ originalSentence: 'x', functionType: 'principle' }, { functionType: 'opening' }],
+      extractedSentences: [{ originalSentence: 'x', functionType: 'principle', advancedVariations: ['y'] }, { functionType: 'opening' }],
       synonymUpgrades: 'oops',
     });
-    expect(report.sentences).toEqual([{ original: 'x', function: 'opening', variations: [], critique: '' }]);
+    expect(report.sentences).toEqual([{ original: 'x', function: 'opening', variations: ['y'], critique: '' }]);
     expect(report.upgrades).toEqual([]);
   });
   it('accepts wrapped arrays and normalises categories', () => {
     const drafts = templatesOutput('english').parse({ templates: [{ template: 'It is [adj] that', category: '原理定性' }, { usage: 'no pattern' }] });
     expect(drafts).toEqual([{ pattern: 'It is [adj] that', category: '其他', usage: '', example: '' }]);
+  });
+});
+
+describe('no-op suggestions are dropped', () => {
+  it('drops corrections and rewrites that change nothing', () => {
+    const report = evaluationOutput('english', 10).parse({
+      score: 8,
+      corrections: [
+        { original: 'I am glad.', corrected: 'i am glad', type: 'polish' },
+        { original: 'He go', corrected: 'He goes', type: 'grammar' },
+      ],
+      polishedEssay: 'p',
+    });
+    expect(report.corrections.map((item) => item.corrected)).toEqual(['He goes']);
+
+    const inspiration = inspirationOutput('english').parse({
+      extractedSentences: [
+        { originalSentence: 'It is good.', advancedVariations: ['It is good', 'It is good!'] },
+        { originalSentence: 'It rains. I stay home.', advancedVariations: ['Because it rains, I stay home.', 'because it rains I stay home', 'It rains. I stay home.'] },
+      ],
+      synonymUpgrades: [
+        { originalWord: 'help', substitutes: [{ word: 'Help' }] },
+        { originalWord: 'make', substitutes: [{ word: 'make' }, { word: 'enable' }] },
+      ],
+    });
+    expect(inspiration.sentences).toHaveLength(1);
+    expect(inspiration.sentences[0]?.variations).toEqual(['Because it rains, I stay home.']);
+    expect(inspiration.upgrades.map((item) => [item.word, item.substitutes.map((substitute) => substitute.word)])).toEqual([['make', ['enable']]]);
   });
 });

@@ -37,6 +37,21 @@ const lenientArray = <T>(item: z.ZodType<T>) => z.unknown().optional().transform
 const strings = lenientArray(z.string().trim().min(1));
 const clamp = (value: number, max: number) => Math.min(Math.max(value, 0), max);
 
+/** 忽略大小写、空白与标点后比较，用于识别"改了等于没改"的条目 */
+const comparable = (text: string) => text.toLowerCase().replace(/[\s\p{P}\p{S}]/gu, '');
+const changes = (before: string, after: string) => comparable(before) !== comparable(after);
+
+/** 去掉与原文相同或彼此重复的改写 */
+function distinctRewrites(original: string, rewrites: string[]): string[] {
+  const seen = new Set([comparable(original)]);
+  return rewrites.filter((rewrite) => {
+    const key = comparable(rewrite);
+    if (seen.has(key)) return false;
+    seen.add(key);
+    return true;
+  });
+}
+
 const dimension = z.object({ score: score.catch(0), feedback: text }).optional().catch(undefined);
 
 export function evaluationOutput<S extends Subject>(subject: S, maxScore: number) {
@@ -74,7 +89,9 @@ export function evaluationOutput<S extends Subject>(subject: S, maxScore: number
         overallComment: raw.overallComment,
         strengths: raw.strengths,
         weaknesses: raw.weaknesses,
-        corrections: raw.corrections.map(({ type, ...item }, index) => ({ id: `c${index + 1}`, kind: type, ...item })),
+        corrections: raw.corrections
+          .filter((item) => changes(item.original, item.corrected))
+          .map(({ type, ...item }, index) => ({ id: `c${index + 1}`, kind: type, ...item })),
         polished: raw.polishedEssay,
       }),
     );
@@ -111,18 +128,15 @@ export function inspirationOutput<S extends Subject>(subject: S) {
     })
     .transform(
       (raw): InspirationReport<S> => ({
-        sentences: raw.extractedSentences.map((item) => ({
-          original: item.originalSentence,
-          function: item.functionType,
-          variations: item.advancedVariations,
-          critique: item.critique,
-        })),
-        upgrades: raw.synonymUpgrades.map((item) => ({
-          word: item.originalWord,
-          context: item.originalContext,
-          category: item.upgradeCategory,
-          substitutes: item.substitutes,
-        })),
+        // 没有任何实质改写的条目直接丢弃，不给用户展示空建议
+        sentences: raw.extractedSentences.flatMap((item) => {
+          const variations = distinctRewrites(item.originalSentence, item.advancedVariations);
+          return variations.length ? [{ original: item.originalSentence, function: item.functionType, variations, critique: item.critique }] : [];
+        }),
+        upgrades: raw.synonymUpgrades.flatMap((item) => {
+          const substitutes = item.substitutes.filter((substitute) => changes(item.originalWord, substitute.word));
+          return substitutes.length ? [{ word: item.originalWord, context: item.originalContext, category: item.upgradeCategory, substitutes }] : [];
+        }),
         structureTips: raw.structureSuggestions,
       }),
     );

@@ -1,4 +1,5 @@
 import { SENTENCE_FUNCTIONS, SENTENCE_FUNCTION_LABELS, TYPE_SPECS } from '@essay/domain';
+import { INSPIRATION_RULES, SUBSTANCE_RULES } from './rules';
 import { dimensionRubric, evaluationShape, templateCategoryList, type SubjectPrompts } from './types';
 
 const BANDS = `- 第五档（高分档，A节 9-10分 / B节 17-20分）：很好地完成试题任务；包含所有内容要点；语法结构和词汇丰富、地道流畅，语言错误极少；有效采用多种衔接手法，文字连贯，层次清晰；格式和语域完全恰当贴切；对目标读者完全产生预期效果。
@@ -41,6 +42,8 @@ ${dimensionRubric('english', spec.maxScore)}
 
 ${VOCABULARY_RULES}
 
+${SUBSTANCE_RULES}
+
 ${MINIMAL_EDIT_RULES}
 
 【输出规范】只输出纯净 JSON，不要 Markdown 标记或多余文字：
@@ -63,28 +66,34 @@ ${essay.content}
 
 ${VOCABULARY_RULES}
 
-【考研高分升级的真实要义】
-- 替换口语泛词：good → beneficial / constructive；help → enable / foster；think → maintain / hold the view that；increase → rise steadily。
-- 句式有机凝聚：定语从句（whose/which）、非谓语短语（Providing... / Compared with...）、让步状语从句（While...）、紧凑介词短语，取代简单句堆砌与 First/Second/Third 模板。
-- 剔除模板套话，如 "Needless to say", "I hope these tips prove helpful"。
+【什么才算有价值的提升】
+- 纠正：语法、搭配、中式直译、指代不清等会被扣分的硬伤。
+- 补足：句子漏掉了题目要求的要点，或论证缺了原因、结果、让步等环节。
+- 重组：连续简单句堆砌、逻辑关系没写出来时，用从句、非谓语、让步或因果结构把逻辑写明。
+- 去冗余：删掉"Needless to say""I hope these tips prove helpful"这类不承载信息的模板套话。
+- 换词只在原词在此处用错、含义模糊或在文中机械重复时才做；good、help、think 这类词用对了就不要动。
+
+${SUBSTANCE_RULES}
+
+${INSPIRATION_RULES}
 
 【输出规范】只输出纯净 JSON：
 {
   "extractedSentences": [
     {
-      "originalSentence": "考生原文中存在冗余、中式表达或句式单一的某句（必须逐字摘自原文）",
+      "originalSentence": "逐字摘自原文、确有具体问题的一句",
       "functionType": "opening",
-      "advancedVariations": ["重构方案1", "重构方案2", "重构方案3"],
-      "critique": "指出原句问题，并说明推荐方案为何更地道、有提分价值"
+      "advancedVariations": ["在结构或内容上有实质变化、可直接替换原句的改写"],
+      "critique": "原句的具体问题是什么，改写后具体解决了什么"
     }
   ],
   "synonymUpgrades": [
     {
-      "originalWord": "文中平淡或不够精准的原词",
+      "originalWord": "在此语境下用错、含义模糊或机械重复的原词",
       "originalContext": "该词在原文中的上下文短语",
       "upgradeCategory": "academic",
       "substitutes": [
-        { "word": "enable / foster", "level": "advanced", "nuance": "搭配上的提分优势", "example": "大纲难度内的自然例句" }
+        { "word": "可直接替换回原句的词或短语", "level": "advanced", "nuance": "与原词在此语境下的具体差别", "example": "替换后的原文句子" }
       ]
     }
   ],
@@ -98,7 +107,7 @@ level 取值："advanced"（考研核心提分词） | "native"（地道实用�
 【考生正文】
 ${essay.content}
 
-请以考研英语大纲为基准进行启发分析，所有升级严守大纲 5500 词范围。请输出 JSON：`,
+请以考研英语大纲为基准进行启发分析，所有升级严守大纲 5500 词范围。只针对确有问题的地方给出建议，写得好的地方不要动，没有可提的就返回空数组。请输出 JSON：`,
     };
   },
 
