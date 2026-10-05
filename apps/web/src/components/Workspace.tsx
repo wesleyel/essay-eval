@@ -1,7 +1,7 @@
 /** 单篇作答的工作区：编辑器 + 评阅面板 + 历史记录。以 essay.id 为 key 挂载，切换作答即重置局部状态。 */
-import type { EssayDetail, UpdateEssayInput } from '@essay/domain';
-import { BookMarked, Download, Loader2, Sparkles } from 'lucide-react';
-import { useRef, useState, type CSSProperties, type KeyboardEvent, type PointerEvent } from 'react';
+import { ESSAY_TYPES, LENGTH_UNIT, TYPE_SPECS, type EssayDetail, type UpdateEssayInput } from '@essay/domain';
+import { BookMarked, Download, History, Loader2, Sparkles } from 'lucide-react';
+import { useRef, useState, type CSSProperties, type KeyboardEvent, type PointerEvent, type ReactNode } from 'react';
 import { useEssayEditor, useSaveStatus } from '../hooks/essays';
 import { useHistoryActions, useReview } from '../hooks/review';
 import { COPY } from '../lib/copy';
@@ -9,12 +9,19 @@ import { downloadMarkdown } from '../lib/export';
 import { Editor, type EditorHandle } from './Editor';
 import { HistoryDialog } from './HistoryDialog';
 import { ReviewPane } from './ReviewPane';
-import { useToast } from './ui';
+import { Segmented, useToast } from './ui';
 
 const WIDTH = { min: 40, max: 65 };
 const clampWidth = (value: number) => Math.min(WIDTH.max, Math.max(WIDTH.min, value));
 
-export function Workspace({ detail, onOpenLibrary }: { detail: EssayDetail; onOpenLibrary: () => void }) {
+interface Props {
+  detail: EssayDetail;
+  /** 侧栏收起时显示的展开按钮 */
+  sidebarToggle: ReactNode;
+  onOpenLibrary: () => void;
+}
+
+export function Workspace({ detail, sidebarToggle, onOpenLibrary }: Props) {
   const { essay } = detail;
   const copy = COPY[essay.subject];
   const notify = useToast();
@@ -37,6 +44,8 @@ export function Workspace({ detail, onOpenLibrary }: { detail: EssayDetail; onOp
   const evaluation = detail.evaluations.find((item) => item.id === selectedEvaluationId) ?? detail.evaluations[0];
   const analyzing = review.status.evaluation.busy || review.status.inspiration.busy || review.status.templates.busy;
   const hasContent = Boolean(essay.content.trim());
+  const length = TYPE_SPECS[essay.type].length;
+  const historyCount = Math.max(detail.versions.length, detail.evaluations.length);
 
   /** 整体替换正文，并记录一步撤销 */
   function replaceContent(content: string, message: string) {
@@ -73,15 +82,26 @@ export function Workspace({ detail, onOpenLibrary }: { detail: EssayDetail; onOp
 
   return (
     <>
-      <div className="flex min-h-12 flex-wrap items-center justify-between gap-3 border-b border-zinc-200 bg-white px-4 py-2">
-        <div className="flex items-center gap-2 text-xs font-bold text-zinc-700">
-          <span className="size-1.5 rounded-full bg-accent ring-3 ring-accent-soft" />
-          {copy.workbench}
-        </div>
-        <div className="flex items-center gap-2">
+      <div className="flex min-h-12 shrink-0 flex-wrap items-center gap-2 border-b border-zinc-200 bg-white px-3 py-2">
+        {sidebarToggle}
+        <Segmented
+          label="题型"
+          value={essay.type}
+          onChange={(type) => change({ type })}
+          options={ESSAY_TYPES[essay.subject].map((value) => ({ value, label: TYPE_SPECS[value].label }))}
+        />
+        <span className="hidden text-xs text-zinc-400 md:inline">
+          建议 {length.min}-{length.max} {LENGTH_UNIT[essay.subject]}
+        </span>
+        <div className="ml-auto flex items-center gap-2">
+          <button type="button" className="btn" onClick={() => setHistoryOpen(true)} title="历史记录与评分轨迹">
+            <History className="text-accent" />
+            <span className="max-sm:hidden">历史记录</span>
+            {historyCount > 0 && <span className="chip border border-accent-soft bg-accent-wash text-accent-strong">{historyCount}</span>}
+          </button>
           <button type="button" className="btn" onClick={onOpenLibrary}>
             <BookMarked />
-            {copy.library.button}
+            <span className="max-sm:hidden">{copy.library.button}</span>
           </button>
           <button type="button" className="btn btn-icon max-sm:hidden" title="导出为 Markdown" aria-label="导出为 Markdown" onClick={() => downloadMarkdown(detail)}>
             <Download />
@@ -111,8 +131,6 @@ export function Workspace({ detail, onOpenLibrary }: { detail: EssayDetail; onOp
             if (undo) change({ content: undo.before });
             setUndo(null);
           }}
-          onOpenHistory={() => setHistoryOpen(true)}
-          historyCount={Math.max(detail.versions.length, detail.evaluations.length)}
         />
         <div
           role="separator"

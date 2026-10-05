@@ -1,6 +1,6 @@
 import { essayKind, isSubject, subjectOfType, type CreateEssayInput, type EssaySummary, type EssayType, type Subject } from '@essay/domain';
 import { QueryClient, QueryClientProvider, useIsMutating } from '@tanstack/react-query';
-import { AlertCircle, Loader2, RefreshCw, Sparkles } from 'lucide-react';
+import { AlertCircle, Loader2, PanelLeftOpen, RefreshCw, Sparkles } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { autosave, useCreateEssay, useDeleteEssay, useEssayDetail, useEssayList } from '../hooks/essays';
 import { useLocalState } from '../hooks/local-state';
@@ -8,7 +8,6 @@ import { api } from '../lib/api';
 import { COPY } from '../lib/copy';
 import { downloadBackup } from '../lib/export';
 import { errorMessage } from '../lib/http';
-import { Header } from './Header';
 import { LibraryDialog } from './LibraryDialog';
 import { SettingsDialog } from './SettingsDialog';
 import { Sidebar } from './Sidebar';
@@ -92,20 +91,21 @@ function Workbench() {
   }
 
   const status = list.error ?? detail.error;
+  /** 侧栏收起时，从工作区工具栏展开 */
+  const sidebarToggle = sidebarOpen ? null : (
+    <button type="button" className="btn btn-ghost btn-icon shrink-0" aria-label="展开侧栏" aria-controls="essay-list" title="展开侧栏" onClick={() => setSidebarOpen(true)}>
+      <PanelLeftOpen />
+    </button>
+  );
 
   return (
     <div className="flex h-dvh flex-col overflow-hidden">
-      <Header
-        subject={subject}
-        onSubject={switchSubject}
-        sidebarOpen={sidebarOpen}
-        onToggleSidebar={() => setSidebarOpen((open) => !open)}
-        onBackup={() => void backup()}
-        onSettings={() => setDialog('settings')}
-      />
       <div className="flex min-h-0 flex-1 overflow-hidden">
         <Sidebar
           subject={subject}
+          onSubject={switchSubject}
+          onBackup={() => void backup()}
+          onSettings={() => setDialog('settings')}
           essays={essays}
           currentId={currentId}
           open={sidebarOpen}
@@ -114,7 +114,8 @@ function Workbench() {
           onCreate={create}
           onDelete={remove}
         />
-        <main className="flex min-h-0 min-w-0 flex-1 flex-col overflow-hidden">
+        <main className="relative flex min-h-0 min-w-0 flex-1 flex-col overflow-hidden">
+          {!detail.data && sidebarToggle && <div className="absolute top-2 left-2">{sidebarToggle}</div>}
           {status ? (
             <Placeholder>
               <AlertCircle className="size-6 text-rose-600" />
@@ -131,7 +132,7 @@ function Workbench() {
               正在加载
             </Placeholder>
           ) : detail.data ? (
-            <Workspace key={detail.data.essay.id} detail={detail.data} onOpenLibrary={() => setDialog('library')} />
+            <Workspace key={detail.data.essay.id} detail={detail.data} sidebarToggle={sidebarToggle} onOpenLibrary={() => setDialog('library')} />
           ) : (
             <Placeholder>
               <h2 className="text-base font-bold text-zinc-800">{copy.firstEssay}</h2>

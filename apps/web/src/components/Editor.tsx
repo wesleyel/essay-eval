@@ -1,11 +1,11 @@
-import { ESSAY_TYPES, LENGTH_UNIT, TYPE_SPECS, lengthStatus, type Essay, type LengthStatus, type UpdateEssayInput } from '@essay/domain';
-import { AlertCircle, Check, ChevronDown, ChevronUp, FileImage, FileText, History, Loader2, RotateCcw, Sparkles, X } from 'lucide-react';
-import { useImperativeHandle, useRef, useState, type ReactNode, type Ref } from 'react';
+import { LENGTH_UNIT, TYPE_SPECS, lengthStatus, type Essay, type LengthStatus, type UpdateEssayInput } from '@essay/domain';
+import { AlertCircle, Check, FileImage, Loader2, RotateCcw, Sparkles, X } from 'lucide-react';
+import { useImperativeHandle, useRef, type ReactNode, type Ref } from 'react';
 import type { SaveStatus } from '../lib/autosave';
 import { CONTENT_PLACEHOLDER, COPY } from '../lib/copy';
 import { errorMessage } from '../lib/http';
 import { compressImage } from '../lib/image';
-import { cx, Segmented, useToast } from './ui';
+import { cx, useToast } from './ui';
 
 export interface EditorHandle {
   /** 在正文中选中并滚动到指定文本 */
@@ -22,8 +22,6 @@ interface Props {
   titleBusy: boolean;
   canUndo: boolean;
   onUndo: () => void;
-  onOpenHistory: () => void;
-  historyCount: number;
 }
 
 const SAVE_STATE: Record<SaveStatus, { label: string; icon: ReactNode; className: string }> = {
@@ -52,11 +50,10 @@ function lengthLabel(status: LengthStatus, unit: string): string {
   }
 }
 
-export function Editor({ ref, essay, onChange, saveStatus, onRetrySave, onGenerateTitle, titleBusy, canUndo, onUndo, onOpenHistory, historyCount }: Props) {
+export function Editor({ ref, essay, onChange, saveStatus, onRetrySave, onGenerateTitle, titleBusy, canUndo, onUndo }: Props) {
   const copy = COPY[essay.subject];
   const notify = useToast();
   const body = useRef<HTMLTextAreaElement>(null);
-  const [showPrompt, setShowPrompt] = useState(true);
   const unit = LENGTH_UNIT[essay.subject];
   const { min, max } = TYPE_SPECS[essay.type].length;
   const status = lengthStatus(essay.wordCount, essay.type);
@@ -84,27 +81,8 @@ export function Editor({ ref, essay, onChange, saveStatus, onRetrySave, onGenera
   }
 
   return (
-    <section id="draft" className="flex min-h-0 min-w-0 flex-col bg-white">
-      <header className="flex shrink-0 flex-wrap items-center justify-between gap-3 border-b border-zinc-200 px-5 py-3">
-        <div className="flex flex-wrap items-center gap-3">
-          <Segmented
-            label="题型"
-            value={essay.type}
-            onChange={(type) => onChange({ type })}
-            options={ESSAY_TYPES[essay.subject].map((value) => ({ value, label: TYPE_SPECS[value].label }))}
-          />
-          <span className="hidden text-xs text-zinc-400 sm:inline">
-            建议 {min}-{max} {unit}
-          </span>
-        </div>
-        <button type="button" className="btn" onClick={onOpenHistory} title="历史作答记录与评分轨迹">
-          <History className="text-accent" />
-          历史记录
-          {historyCount > 0 && <span className="chip border border-accent-soft bg-accent-wash text-accent-strong">{historyCount}</span>}
-        </button>
-      </header>
-
-      <div className="flex min-h-0 flex-1 flex-col gap-4 overflow-y-auto p-5">
+    <section id="draft" className="min-h-0 min-w-0 overflow-y-auto bg-white">
+      <div className="flex min-h-full flex-col gap-3 px-6 py-4">
         <div className="flex items-center gap-2">
           <input
             value={essay.title}
@@ -113,43 +91,35 @@ export function Editor({ ref, essay, onChange, saveStatus, onRetrySave, onGenera
             placeholder={copy.untitled}
             className="min-w-0 flex-1 border-b border-transparent bg-transparent py-1 text-xl font-bold text-zinc-900 outline-none placeholder:text-zinc-300 focus:border-accent"
           />
-          <button type="button" className="btn shrink-0" onClick={onGenerateTitle} disabled={titleBusy}>
+          <button type="button" className="btn btn-ghost shrink-0" onClick={onGenerateTitle} disabled={titleBusy} title="AI 生成标题">
             {titleBusy ? <Loader2 className="animate-spin" /> : <Sparkles />}
-            AI 生成标题
+            AI 标题
           </button>
         </div>
 
-        <div className="overflow-hidden rounded-lg border border-zinc-200 bg-zinc-50">
-          <button
-            type="button"
-            onClick={() => setShowPrompt((value) => !value)}
-            aria-expanded={showPrompt}
-            className="flex w-full items-center gap-2 border-b border-zinc-200 bg-zinc-100/70 px-3.5 py-2.5 text-left text-xs font-semibold text-zinc-700"
-          >
-            <FileText className="size-4 text-accent" />
-            {copy.promptLabel}
-            {showPrompt ? <ChevronUp className="size-4 text-zinc-400" /> : <ChevronDown className="size-4 text-zinc-400" />}
-          </button>
-          {showPrompt && (
-            <div className="space-y-3 bg-white p-3">
-              <textarea value={essay.prompt} onChange={(event) => onChange({ prompt: event.target.value })} rows={3} placeholder={copy.promptPlaceholder} className="field resize-y leading-relaxed" />
-              <div className="flex items-center gap-2">
-                <label className="btn cursor-pointer">
-                  <FileImage />
-                  添加题目图片
-                  <input type="file" accept="image/*" className="hidden" onChange={(event) => void attachImage(event.target.files?.[0])} />
-                </label>
-                {essay.promptImage && (
-                  <button type="button" className="btn" onClick={() => onChange({ promptImage: null })}>
-                    <X />
-                    移除图片
-                  </button>
-                )}
-              </div>
-              {essay.promptImage && <img src={essay.promptImage} alt="题目图片" className="max-h-64 max-w-full rounded-md border border-zinc-200 object-contain" />}
-            </div>
-          )}
+        <div className="group relative">
+          <textarea
+            value={essay.prompt}
+            onChange={(event) => onChange({ prompt: event.target.value })}
+            rows={2}
+            aria-label="题目要求"
+            placeholder={copy.promptPlaceholder}
+            className="block max-h-72 min-h-14 w-full resize-y rounded-md border border-transparent bg-zinc-50 py-2 pr-28 pl-3 text-sm leading-relaxed text-zinc-700 outline-none [field-sizing:content] placeholder:text-zinc-400 focus:border-accent focus:bg-white"
+          />
+          <div className="absolute top-1.5 right-1.5 flex gap-1">
+            {essay.promptImage && (
+              <button type="button" className="btn btn-ghost btn-icon size-7" title="移除题目图片" aria-label="移除题目图片" onClick={() => onChange({ promptImage: null })}>
+                <X />
+              </button>
+            )}
+            <label className="btn btn-ghost min-h-7 cursor-pointer px-2" title="添加题目图片">
+              <FileImage />
+              {essay.promptImage ? '换图' : '图片'}
+              <input type="file" accept="image/*" className="hidden" onChange={(event) => void attachImage(event.target.files?.[0])} />
+            </label>
+          </div>
         </div>
+        {essay.promptImage && <img src={essay.promptImage} alt="题目图片" className="max-h-64 max-w-full self-start rounded-md border border-zinc-200 object-contain" />}
 
         <div className="flex min-h-[360px] flex-1 flex-col rounded-lg border border-zinc-200 bg-white shadow-sm">
           <textarea

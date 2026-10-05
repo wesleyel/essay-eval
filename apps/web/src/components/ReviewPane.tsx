@@ -58,14 +58,7 @@ export function ReviewPane({ essay, detail, evaluation, review, onSelectEvaluati
 
   return (
     <aside id="feedback" aria-label={copy.review.title} className="flex min-h-0 min-w-0 flex-col bg-zinc-50">
-      <div className="flex items-center justify-between gap-3 border-b border-zinc-200 bg-white px-5 py-3">
-        <div>
-          <span className="text-[10px] font-extrabold tracking-[0.12em] text-accent">{copy.review.eyebrow}</span>
-          <h2 className="text-base font-bold text-zinc-900">{copy.review.title}</h2>
-        </div>
-        <span className="text-[11px] text-zinc-500">{analyzing ? '分析中' : evaluation ? '已完成' : '待评分'}</span>
-      </div>
-      <nav aria-label="反馈章节" className="flex gap-0.5 overflow-x-auto border-b border-zinc-200 bg-white px-3 py-1.5">
+      <nav aria-label="反馈章节" className="flex min-h-12 shrink-0 items-center gap-0.5 overflow-x-auto border-b border-zinc-200 bg-white px-3">
         {(
           [
             ['score', copy.sections.score],
@@ -79,6 +72,7 @@ export function ReviewPane({ essay, detail, evaluation, review, onSelectEvaluati
             {label}
           </a>
         ))}
+        <span className="ml-auto pl-2 text-[11px] whitespace-nowrap text-zinc-400">{analyzing ? '分析中' : evaluation ? '已完成' : '待评分'}</span>
       </nav>
 
       <div className="min-h-0 flex-1 overflow-y-auto">

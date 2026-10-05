@@ -1,5 +1,5 @@
-import { ESSAY_TYPES, LENGTH_UNIT, TYPE_SPECS, type EssaySummary, type EssayType, type Subject } from '@essay/domain';
-import { CheckCircle2, Plus, Search, Trash2, X } from 'lucide-react';
+import { ESSAY_TYPES, LENGTH_UNIT, SUBJECTS, TYPE_SPECS, type EssaySummary, type EssayType, type Subject } from '@essay/domain';
+import { CheckCircle2, Download, Landmark, PanelLeftClose, PenLine, Plus, Search, Settings, Trash2 } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { COPY } from '../lib/copy';
 import { cx, formatDate, Segmented } from './ui';
@@ -7,8 +7,13 @@ import { cx, formatDate, Segmented } from './ui';
 type TypeFilter = EssayType | 'all';
 type ProgressFilter = 'all' | 'answered' | 'blank';
 
+const SUBJECT_ICON = { english: PenLine, politics: Landmark } satisfies Record<Subject, unknown>;
+
 interface Props {
   subject: Subject;
+  onSubject: (subject: Subject) => void;
+  onBackup: () => void;
+  onSettings: () => void;
   essays: EssaySummary[];
   currentId: string | null;
   open: boolean;
@@ -20,7 +25,7 @@ interface Props {
 
 const isAnswered = (essay: EssaySummary) => essay.content.trim().length > 0;
 
-export function Sidebar({ subject, essays, currentId, open, onClose, onSelect, onCreate, onDelete }: Props) {
+export function Sidebar({ subject, onSubject, onBackup, onSettings, essays, currentId, open, onClose, onSelect, onCreate, onDelete }: Props) {
   const copy = COPY[subject];
   const [type, setType] = useState<TypeFilter>('all');
   const [progress, setProgress] = useState<ProgressFilter>('all');
@@ -49,19 +54,20 @@ export function Sidebar({ subject, essays, currentId, open, onClose, onSelect, o
     <>
       <button type="button" aria-label="关闭列表" onClick={onClose} className="fixed inset-0 z-30 cursor-default bg-zinc-950/20 xl:hidden" />
       <aside id="essay-list" aria-label={copy.list} className="fixed inset-y-0 left-0 z-40 flex w-72 flex-col border-r border-zinc-200 bg-white xl:static xl:z-auto xl:w-64">
-        <div className="flex h-14 shrink-0 items-center justify-between border-b border-zinc-200 px-3">
-          <div className="min-w-0">
-            <h2 className="truncate text-xs font-bold text-zinc-800">{copy.list}</h2>
-            <p className="text-[10px] text-zinc-500">
-              {essays.length} 篇 · {answered} 篇已作答
-            </p>
-          </div>
-          <button type="button" className="btn btn-ghost btn-icon xl:hidden" aria-label="关闭列表" onClick={onClose}>
-            <X />
-          </button>
-        </div>
-
         <div className="shrink-0 space-y-2 border-b border-zinc-200 p-3">
+          <div className="flex items-center gap-2">
+            <span aria-hidden className="flex size-7 shrink-0 items-center justify-center rounded-md bg-accent text-[11px] font-bold text-white">
+              {copy.badge}
+            </span>
+            <div className="min-w-0 flex-1 leading-tight">
+              <h1 className="truncate text-xs font-bold text-zinc-900">{copy.heading}</h1>
+              <p className="truncate text-[10px] text-zinc-500">{copy.tagline}</p>
+            </div>
+            <button type="button" className="btn btn-ghost btn-icon shrink-0" aria-label="收起侧栏" title="收起侧栏" onClick={onClose}>
+              <PanelLeftClose />
+            </button>
+          </div>
+          <SubjectTabs subject={subject} onSubject={onSubject} />
           <button type="button" className="btn btn-primary w-full" onClick={() => onCreate(type === 'all' ? undefined : type)}>
             <Plus />
             {copy.newEssay}
@@ -95,8 +101,47 @@ export function Sidebar({ subject, essays, currentId, open, onClose, onSelect, o
             <EssayItem key={essay.id} essay={essay} active={essay.id === currentId} onSelect={() => onSelect(essay.id)} onDelete={() => onDelete(essay)} />
           ))}
         </ul>
+
+        <footer className="flex shrink-0 gap-1 border-t border-zinc-200 p-2">
+          <button type="button" className="btn btn-ghost flex-1" onClick={onBackup} title="备份全部数据">
+            <Download />
+            备份
+          </button>
+          <button type="button" className="btn btn-ghost flex-1" onClick={onSettings} title="模型设置">
+            <Settings />
+            设置
+          </button>
+        </footer>
       </aside>
     </>
+  );
+}
+
+function SubjectTabs({ subject, onSubject }: { subject: Subject; onSubject: (subject: Subject) => void }) {
+  return (
+    <div role="tablist" aria-label="科目" className="flex rounded-lg border border-zinc-200 bg-zinc-100 p-0.5">
+      {SUBJECTS.map((value) => {
+        const Icon = SUBJECT_ICON[value];
+        const selected = value === subject;
+        return (
+          <button
+            key={value}
+            type="button"
+            role="tab"
+            aria-selected={selected}
+            data-subject={value}
+            onClick={() => onSubject(value)}
+            className={cx(
+              'flex flex-1 items-center justify-center gap-1.5 rounded-md py-1.5 text-xs font-bold transition-colors',
+              selected ? 'bg-accent text-white shadow-sm' : 'text-zinc-600 hover:bg-white/60 hover:text-zinc-900',
+            )}
+          >
+            <Icon className="size-3.5" aria-hidden />
+            {COPY[value].tab}
+          </button>
+        );
+      })}
+    </div>
   );
 }
 
