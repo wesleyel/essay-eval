@@ -2,7 +2,7 @@ import { REASONING_EFFORTS, type AISettingsInput, type AISettingsView, type Reas
 import { AlertCircle, CheckCircle2, Cpu, Eye, EyeOff, Loader2, Sparkles } from 'lucide-react';
 import { useState } from 'react';
 import { useSettings } from '../hooks/library';
-import { errorMessage } from '../lib/http';
+import { errorMessage, LOCAL_MODE } from '../lib/http';
 import { cx, Dialog, Segmented, useToast } from './ui';
 
 type Preset = Omit<AISettingsInput, 'apiKey'> & { name: string };
@@ -102,7 +102,7 @@ function SettingsForm({ initial, onDone }: { initial: AISettingsView; onDone: ()
             {showKey ? <EyeOff className="size-4" /> : <Eye className="size-4" />}
           </button>
         </span>
-        <span className="mt-1 block text-[11px] text-zinc-400">密钥保存在服务端数据库，不会再返回给浏览器。</span>
+        <span className="mt-1 block text-[11px] text-zinc-400">{LOCAL_MODE ? '密钥与全部数据仅保存在本机浏览器（IndexedDB），请求由浏览器直连模型服务。' : '密钥保存在服务端数据库，不会再返回给浏览器。'}</span>
       </label>
 
       <div>

@@ -1,3 +1,8 @@
+import { handleLocal } from './local/handler';
+
+/** 纯静态部署（如 GitHub Pages）时没有后端：数据存 IndexedDB，模型由浏览器直连 */
+export const LOCAL_MODE = import.meta.env.PUBLIC_BACKEND === 'local';
+
 export class ApiError extends Error {
   constructor(
     readonly status: number,
@@ -10,6 +15,13 @@ export class ApiError extends Error {
 type Method = 'GET' | 'POST' | 'PUT' | 'PATCH' | 'DELETE';
 
 async function request<T>(method: Method, path: string, body?: unknown): Promise<T> {
+  if (LOCAL_MODE) {
+    // 与网络路径保持同样的 JSON 往返语义（去掉 undefined 等）
+    const { status, data } = await handleLocal(method, path, body === undefined ? undefined : JSON.parse(JSON.stringify(body)));
+    if (status === 204) return undefined as T;
+    if (status >= 400) throw new ApiError(status, (data as { error?: string }).error ?? `请求失败 (HTTP ${status})`);
+    return data as T;
+  }
   let response: Response;
   try {
     response = await fetch(`/api${path}`, {
