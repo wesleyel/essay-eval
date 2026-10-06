@@ -16,7 +16,7 @@
       "binding": "DB",
       "database_name": "essay-eval",
       // 本地开发可用占位值；部署前用 `wrangler d1 create essay-eval` 的输出替换
-      "database_id": "00000000-0000-0000-0000-000000000000",
+      "database_id": "ac2f65ee-8f73-46d6-8cbe-68556036b16d",
       "migrations_dir": "migrations"
     }
   ],
