@@ -20,5 +20,6 @@
       "migrations_dir": "migrations"
     }
   ],
+  "routes": [{ "pattern": "e.z11.cc.cd", "custom_domain": true }],
   "observability": { "enabled": true }
 }
