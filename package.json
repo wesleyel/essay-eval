@@ -1,6 +1,29 @@
 {
   "name": "essay-eval",
+  "version": "0.1.0",
   "private": true,
+  "description": "考研英语写作与政治主观题的 AI 评分、纠错、表达启发与语料沉淀工作台",
+  "license": "MIT",
+  "author": "wesleyel",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/wesleyel/essay-eval.git"
+  },
+  "homepage": "https://github.com/wesleyel/essay-eval#readme",
+  "bugs": {
+    "url": "https://github.com/wesleyel/essay-eval/issues"
+  },
+  "keywords": [
+    "essay",
+    "kaoyan",
+    "cloudflare-workers",
+    "d1",
+    "hono",
+    "astro"
+  ],
+  "engines": {
+    "node": ">=22"
+  },
   "type": "module",
   "packageManager": "pnpm@11.5.1",
   "scripts": {
