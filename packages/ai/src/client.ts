@@ -1,6 +1,6 @@
 import type { AIConfig } from '@essay/domain';
 import type { z } from 'zod';
-import { upstreamError } from '../lib/errors';
+import { upstreamError } from './errors';
 
 export interface ChatRequest {
   system?: string;

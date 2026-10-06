@@ -7,7 +7,7 @@ import {
   type EssayOf,
   type Subject,
 } from '@essay/domain';
-import type { ChatRequest } from '../llm/client';
+import type { ChatRequest } from '../client';
 
 /** 一个科目的全部提示词。新增科目时，类型会强制补齐每一项。 */
 export interface SubjectPrompts<S extends Subject> {

@@ -20,7 +20,7 @@ import {
 import { mkdirSync, writeFileSync } from 'node:fs';
 import { dirname, resolve } from 'node:path';
 import { DatabaseSync } from 'node:sqlite';
-import { evaluationOutput, inspirationOutput } from '../src/llm/schemas';
+import { evaluationOutput, inspirationOutput } from '@essay/ai';
 
 const source = process.argv[2];
 if (!source) throw new Error('用法：import-legacy <旧版 essay.db 路径> [输出 SQL 路径]');

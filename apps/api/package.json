@@ -7,7 +7,7 @@
     "dev": "wrangler dev --port 8787",
     "deploy": "wrangler deploy",
     "typecheck": "tsc -p . && tsc -p scripts",
-    "test": "vitest run",
+    "test": "vitest run --passWithNoTests",
     "cf-typegen": "wrangler types --include-runtime false",
     "db:generate": "drizzle-kit generate",
     "db:migrate:local": "wrangler d1 migrations apply essay-eval --local",
@@ -17,6 +17,7 @@
     "db:import-legacy": "tsx scripts/import-legacy.ts"
   },
   "dependencies": {
+    "@essay/ai": "workspace:*",
     "@essay/domain": "workspace:*",
     "@hono/zod-validator": "^0.9.1",
     "drizzle-orm": "^0.45.3",

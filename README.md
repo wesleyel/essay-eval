@@ -29,9 +29,15 @@ pnpm dev            # http://localhost:4321
 
 ```
 packages/domain   领域模型（仅依赖 zod）
+packages/ai       提示词、模型调用与输出校验（Worker 与浏览器共用）
 apps/api          Hono Worker：REST API + 托管前端，数据存 D1（Drizzle）
 apps/web          Astro 静态站点，React 岛屿渲染工作台
 ```
+
+## 纯前端模式 / GitHub Pages
+
+以 `PUBLIC_BACKEND=local` 构建时不需要后端：数据与密钥存于浏览器 IndexedDB，模型由浏览器直连（需服务支持 CORS，如 DeepSeek、OpenAI）。
+推送到 `main` 会由 `.github/workflows/pages.yml` 自动部署；首次需在仓库 Settings → Pages 将 Source 设为 GitHub Actions。数据仅存本机，请定期点「备份」导出。
 
 ## 文档
 

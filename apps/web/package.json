@@ -11,7 +11,9 @@
   },
   "dependencies": {
     "@astrojs/react": "^7.0.0",
+    "@essay/ai": "workspace:*",
     "@essay/domain": "workspace:*",
+    "zod": "^4.6.5",
     "@tanstack/react-query": "^5.104.1",
     "astro": "^7.3.5",
     "diff": "^9.0.0",
