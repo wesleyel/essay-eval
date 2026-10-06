@@ -16,6 +16,7 @@ let opened: Promise<IDBDatabase> | undefined;
 
 function open(): Promise<IDBDatabase> {
   opened ??= new Promise((resolve, reject) => {
+    requestPersistentStorage();
     const request = indexedDB.open(DB_NAME, DB_VERSION);
     request.onupgradeneeded = () => {
       const db = request.result;
@@ -31,6 +32,11 @@ function open(): Promise<IDBDatabase> {
     request.onblocked = () => reject(new Error('数据库被其他标签页占用，请关闭其他标签页后重试'));
   });
   return opened;
+}
+
+/** 申请持久化存储，降低被浏览器在空间紧张时自动清理的概率；失败可忽略 */
+export function requestPersistentStorage(): void {
+  void navigator.storage?.persist?.().catch(() => {});
 }
 
 const wrap = <T>(request: IDBRequest<T>) =>
