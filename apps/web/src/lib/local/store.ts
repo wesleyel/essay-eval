@@ -1,10 +1,11 @@
 /** 浏览器端的仓库层，行为对齐 Worker 的 repositories：同样的领域对象，存进 IndexedDB */
 import {
   DEFAULT_AI_CONFIG,
-  DEFAULT_TYPE,
   LENGTH_UNIT,
   countWords,
   isTypeOf,
+  normalizeTags,
+  patchCategoryError,
   type AIConfig,
   type Backup,
   type CreateEssayInput,
@@ -19,6 +20,7 @@ import {
   type Subject,
   type Template,
   type TemplateDraft,
+  type TemplateSource,
   type UpdateEssayInput,
   type Version,
 } from '@essay/domain';
@@ -121,10 +123,10 @@ export const createEssay = (input: CreateEssayInput): Promise<Essay> =>
     const essay = {
       id: newId('essay'),
       subject: input.subject,
-      type: input.type ?? DEFAULT_TYPE[input.subject],
+      type: input.type,
       title: input.title || UNTITLED[input.subject],
       category: input.category ?? '',
-      tags: input.tags ?? [],
+      tags: normalizeTags(input.tags),
       prompt: input.prompt ?? '',
       promptImage: input.promptImage ?? null,
       content,
@@ -140,9 +142,12 @@ export const updateEssay = (id: string, patch: UpdateEssayInput): Promise<Essay>
   transaction([STORES.essays], 'readwrite', async (tx) => {
     const current = await essayOf(tx, id);
     if (patch.type && !isTypeOf(current.subject, patch.type)) throw badRequest('题型不属于当前板块，请在对应板块新建');
+    const classification = patchCategoryError(current, patch);
+    if (classification) throw badRequest(classification);
     const next = {
       ...current,
       ...patch,
+      ...(patch.tags && { tags: normalizeTags(patch.tags) }),
       ...(patch.content !== undefined && { wordCount: countWords(patch.content, current.subject) }),
       updatedAt: now(),
     } as Essay;
@@ -221,16 +226,16 @@ export const saveInspiration = (essayId: string, report: InspirationReport): Pro
 
 // ---------- 句式库 ----------
 
+const sourceOf = (essay: Essay | undefined): TemplateSource | null =>
+  essay ? { essayId: essay.id, title: essay.title, type: essay.type, category: essay.category, tags: essay.tags } : null;
+
 const listTemplatesIn = async (tx: Tx, subject?: Subject): Promise<Template[]> => {
   const [rows, essays] = await Promise.all([tx.all<TemplateRow>(STORES.templates), tx.all<Essay>(STORES.essays)]);
-  const titles = new Map(essays.map((essay) => [essay.id, essay.title]));
+  const sources = new Map(essays.map((essay) => [essay.id, essay]));
   return rows
     .filter((row) => !subject || row.subject === subject)
     .sort(byNewest)
-    .map(({ sourceEssayId, ...row }) => ({
-      ...row,
-      source: sourceEssayId && titles.has(sourceEssayId) ? { essayId: sourceEssayId, title: titles.get(sourceEssayId)! } : null,
-    }));
+    .map(({ sourceEssayId, ...row }) => ({ ...row, source: sourceOf(sources.get(sourceEssayId ?? '')) }));
 };
 
 export const listTemplates = (subject?: Subject) => transaction([STORES.templates, STORES.essays], 'readonly', (tx) => listTemplatesIn(tx, subject));
@@ -243,7 +248,7 @@ export const listExtractionSources = (subject: Subject, essayId?: string) =>
 
 /** 插入新句式；同科目下已存在的句式被跳过。返回实际新增的条目。 */
 export const insertTemplates = (subject: Subject, drafts: (TemplateDraft & { source: { essayId: string; title: string } })[]): Promise<Template[]> =>
-  transaction([STORES.templates], 'readwrite', async (tx) => {
+  transaction([STORES.templates, STORES.essays], 'readwrite', async (tx) => {
     const known = new Set((await tx.all<TemplateRow>(STORES.templates)).filter((row) => row.subject === subject).map((row) => row.pattern));
     const createdAt = now();
     const inserted: Template[] = [];
@@ -253,7 +258,7 @@ export const insertTemplates = (subject: Subject, drafts: (TemplateDraft & { sou
       const row: TemplateRow = { ...draft, id: newId('tpl'), subject, sourceEssayId: source.essayId, createdAt };
       await tx.put(STORES.templates, row);
       const { sourceEssayId: _omit, ...rest } = row;
-      inserted.push({ ...rest, source });
+      inserted.push({ ...rest, source: sourceOf(await tx.get<Essay>(STORES.essays, source.essayId)) });
     }
     return inserted;
   });

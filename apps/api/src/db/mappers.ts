@@ -33,9 +33,12 @@ export function toInspiration({ sourceType, sourcePrompt, sourceContent, ...row 
   return { ...row, source: { type: sourceType, prompt: sourcePrompt, content: sourceContent } };
 }
 
-export function toTemplate({ sourceEssayId, ...row }: TemplateRow, sourceTitle: string | null): Template {
+/** 来源作答的分类信息；作答被删除后为 null */
+export type TemplateSourceRow = Pick<EssayRow, 'id' | 'title' | 'type' | 'category' | 'tags'>;
+
+export function toTemplate({ sourceEssayId, ...row }: TemplateRow, source: TemplateSourceRow | null | undefined): Template {
   return {
     ...row,
-    source: sourceEssayId && sourceTitle !== null ? { essayId: sourceEssayId, title: sourceTitle } : null,
+    source: sourceEssayId && source ? { essayId: source.id, title: source.title, type: source.type, category: source.category, tags: source.tags } : null,
   };
 }

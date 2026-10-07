@@ -1,19 +1,19 @@
 import type { Subject, Template, TemplateDraft } from '@essay/domain';
 import { desc, eq, inArray } from 'drizzle-orm';
 import type { Database } from '../db/client';
-import { toTemplate } from '../db/mappers';
+import { toTemplate, type TemplateSourceRow } from '../db/mappers';
 import { essays, templates } from '../db/schema';
 import { notFound } from '../lib/errors';
 import { newId, now } from '../lib/ids';
 
 export async function listTemplates(db: Database, subject?: Subject): Promise<Template[]> {
   const rows = await db
-    .select({ template: templates, sourceTitle: essays.title })
+    .select({ template: templates, source: { id: essays.id, title: essays.title, type: essays.type, category: essays.category, tags: essays.tags } })
     .from(templates)
     .leftJoin(essays, eq(essays.id, templates.sourceEssayId))
     .where(subject ? eq(templates.subject, subject) : undefined)
     .orderBy(desc(templates.createdAt));
-  return rows.map((row) => toTemplate(row.template, row.sourceTitle));
+  return rows.map((row) => toTemplate(row.template, row.source));
 }
 
 export interface TemplateCandidate<S extends Subject> extends TemplateDraft<S> {
@@ -25,11 +25,16 @@ export async function insertTemplates<S extends Subject>(db: Database, subject: 
   if (!candidates.length) return [];
   const createdAt = now();
   const rows = candidates.map(({ source, ...draft }) => ({ ...draft, id: newId('template'), subject, sourceEssayId: source.essayId, createdAt }));
-  const titles = new Map(candidates.map((item) => [item.source.essayId, item.source.title]));
+  const sources = await findSources(db, [...new Set(candidates.map((item) => item.source.essayId))]);
   // 逐条插入并忽略重复（D1 单条语句的绑定参数有上限），整体放在一个批次里
   const [first, ...rest] = rows.map((row) => db.insert(templates).values(row).onConflictDoNothing().returning());
   const inserted = await db.batch([first!, ...rest]);
-  return inserted.flat().map((row) => toTemplate(row, row.sourceEssayId ? (titles.get(row.sourceEssayId) ?? null) : null));
+  return inserted.flat().map((row) => toTemplate(row, row.sourceEssayId ? sources.get(row.sourceEssayId) : null));
+}
+
+async function findSources(db: Database, ids: string[]): Promise<Map<string, TemplateSourceRow>> {
+  const rows = await db.select({ id: essays.id, title: essays.title, type: essays.type, category: essays.category, tags: essays.tags }).from(essays).where(inArray(essays.id, ids));
+  return new Map(rows.map((row) => [row.id, row]));
 }
 
 export async function deleteTemplate(db: Database, id: string): Promise<void> {

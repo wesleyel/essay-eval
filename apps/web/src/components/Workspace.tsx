@@ -1,12 +1,13 @@
 /** 单篇作答的工作区：编辑器 + 评阅面板 + 历史记录。以 essay.id 为 key 挂载，切换作答即重置局部状态。 */
-import { ESSAY_TYPES, LENGTH_UNIT, TYPE_SPECS, type EssayDetail, type UpdateEssayInput } from '@essay/domain';
+import { defaultCategory, ESSAY_TYPES, LENGTH_UNIT, TYPE_SPECS, type EssayDetail, type UpdateEssayInput } from '@essay/domain';
 import { BookMarked, Download, History, Loader2, Sparkles } from 'lucide-react';
 import { useRef, useState, type CSSProperties, type KeyboardEvent, type PointerEvent, type ReactNode } from 'react';
-import { useEssayEditor, useSaveStatus } from '../hooks/essays';
+import { useEssayEditor, useEssayList, useSaveStatus } from '../hooks/essays';
 import { useHistoryActions, useReview } from '../hooks/review';
 import { COPY } from '../lib/copy';
 import { libraryHref } from '../lib/library';
 import { downloadMarkdown } from '../lib/export';
+import { ClassificationFields, useTagSuggestions } from './Classification';
 import { Editor, type EditorHandle } from './Editor';
 import { HistoryDialog } from './HistoryDialog';
 import { ReviewPane } from './ReviewPane';
@@ -34,6 +35,7 @@ export function Workspace({ detail, sidebarToggle }: Props) {
   const [selectedEvaluationId, setSelectedEvaluationId] = useState<string>();
   const [undo, setUndo] = useState<{ before: string; after: string } | null>(null);
 
+  const suggestions = useTagSuggestions(useEssayList(essay.subject).data ?? []);
   const change = (patch: UpdateEssayInput) => editor.update(essay, patch);
   const review = useReview(essay, (title) => {
     change({ title });
@@ -87,7 +89,7 @@ export function Workspace({ detail, sidebarToggle }: Props) {
         <Segmented
           label="题型"
           value={essay.type}
-          onChange={(type) => change({ type })}
+          onChange={(type) => change({ type, category: defaultCategory(type) })}
           options={ESSAY_TYPES[essay.subject].map((value) => ({ value, label: TYPE_SPECS[value].label }))}
         />
         <span className="hidden text-xs text-zinc-400 md:inline">
@@ -111,6 +113,18 @@ export function Workspace({ detail, sidebarToggle }: Props) {
             {analyzing ? copy.review.running : evaluation || detail.inspiration ? copy.review.again : copy.review.start}
           </button>
         </div>
+      </div>
+
+      <div className="flex min-h-10 shrink-0 flex-wrap items-center gap-2 border-b border-zinc-200 bg-zinc-50 px-3 py-1.5">
+        <span className="text-[11px] font-bold text-zinc-500">分类与主题</span>
+        <ClassificationFields
+          type={essay.type}
+          category={essay.category}
+          tags={essay.tags}
+          suggestions={suggestions}
+          onCategory={(category) => change({ category })}
+          onTags={(tags) => change({ tags })}
+        />
       </div>
 
       <div

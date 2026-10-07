@@ -1,7 +1,8 @@
 import {
-  DEFAULT_TYPE,
   countWords,
   isTypeOf,
+  normalizeTags,
+  patchCategoryError,
   type CreateEssayInput,
   type Essay,
   type EssayListQuery,
@@ -72,10 +73,10 @@ export async function createEssay(db: Database, input: CreateEssayInput): Promis
     .values({
       id: newId('essay'),
       subject: input.subject,
-      type: input.type ?? DEFAULT_TYPE[input.subject],
+      type: input.type,
       title: input.title || UNTITLED[input.subject],
       category: input.category ?? '',
-      tags: input.tags ?? [],
+      tags: normalizeTags(input.tags),
       prompt: input.prompt ?? '',
       promptImage: input.promptImage ?? null,
       content,
@@ -92,10 +93,13 @@ export async function updateEssay(db: Database, id: string, patch: UpdateEssayIn
   if (patch.type && !isTypeOf(current.subject, patch.type)) {
     throw badRequest('题型不属于当前板块，请在对应板块新建');
   }
+  const classification = patchCategoryError(current, patch);
+  if (classification) throw badRequest(classification);
   const [row] = await db
     .update(essays)
     .set({
       ...patch,
+      ...(patch.tags && { tags: normalizeTags(patch.tags) }),
       ...(patch.content !== undefined && { wordCount: countWords(patch.content, current.subject) }),
       updatedAt: now(),
     })

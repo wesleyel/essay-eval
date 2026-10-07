@@ -1,4 +1,4 @@
-import type { Subject } from './subject';
+import type { EssayType, Subject } from './subject';
 
 export const TEMPLATE_CATEGORIES = {
   english: ['开头破题', '图表描述', '原因分析', '举例论证', '转折衔接', '结尾收束', '书信功能', '观点表达', '其他'],
@@ -16,10 +16,18 @@ export interface TemplateDraft<S extends Subject = Subject> {
   example: string;
 }
 
+export interface TemplateSource {
+  essayId: string;
+  title: string;
+  type: EssayType;
+  category: string;
+  tags: string[];
+}
+
 export type Template<S extends Subject = Subject> = TemplateDraft<S> & {
   id: string;
   subject: S;
-  /** 来源作答被删除后为 null */
-  source: { essayId: string; title: string } | null;
+  /** 来源作答被删除后为 null；分类与主题标签取自来源作答的当前值，用于语料库筛选 */
+  source: TemplateSource | null;
   createdAt: string;
 };

@@ -1,4 +1,5 @@
 import { z } from 'zod';
+import { classificationError, MAX_TAG_LENGTH, MAX_TAGS } from './classification';
 import type { Evaluation, EvaluationSummary, Inspiration, SourceSnapshot } from './review';
 import { ALL_ESSAY_TYPES, ESSAY_TYPES, SUBJECTS, type EssayKind, type Subject } from './subject';
 import type { Template } from './template';
@@ -68,18 +69,25 @@ const promptImage = z
 const editableFields = {
   title: z.string().trim().max(200),
   category: z.string().trim().max(100),
-  tags: z.array(z.string().trim().min(1).max(50)).max(30),
+  tags: z.array(z.string().trim().min(1).max(MAX_TAG_LENGTH)).max(MAX_TAGS),
   prompt: z.string().max(20_000),
   promptImage: promptImage.nullable(),
   content: z.string().max(50_000),
 };
 
+/** 新建必须声明题型、分类（有分类的题型）与至少一个主题标签 */
 const createVariant = <S extends Subject>(subject: S) =>
-  z.object({
-    subject: z.literal(subject),
-    type: z.enum(ESSAY_TYPES[subject]).optional(),
-    ...editableFields,
-  }).partial({ title: true, category: true, tags: true, prompt: true, promptImage: true, content: true });
+  z
+    .object({
+      subject: z.literal(subject),
+      type: z.enum(ESSAY_TYPES[subject]),
+      ...editableFields,
+    })
+    .partial({ title: true, category: true, prompt: true, promptImage: true, content: true })
+    .superRefine((input, ctx) => {
+      const message = classificationError(input.type, input.category ?? '', input.tags);
+      if (message) ctx.addIssue({ code: 'custom', path: [message.startsWith('请至少') || message.startsWith('主题') ? 'tags' : 'category'], message });
+    });
 
 export const createEssayInput = z.discriminatedUnion('subject', [createVariant('english'), createVariant('politics')]);
 export type CreateEssayInput = z.infer<typeof createEssayInput>;
@@ -88,7 +96,8 @@ export type CreateEssayInput = z.infer<typeof createEssayInput>;
 export const updateEssayInput = z
   .object({ type: z.enum(ALL_ESSAY_TYPES), ...editableFields })
   .partial()
-  .strict();
+  .strict()
+  .refine((patch) => patch.tags === undefined || patch.tags.some((tag) => tag.trim()), { path: ['tags'], message: '请至少添加一个主题标签' });
 export type UpdateEssayInput = z.infer<typeof updateEssayInput>;
 
 export const essayListQuery = z.object({

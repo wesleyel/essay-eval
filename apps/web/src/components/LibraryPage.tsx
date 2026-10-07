@@ -6,12 +6,13 @@ import { useTemplateLibrary } from '../hooks/library';
 import { useLocalState } from '../hooks/local-state';
 import { COPY } from '../lib/copy';
 import { errorMessage } from '../lib/http';
-import { highlight, isSavedCombos, patternSegments, positionOf, POSITIONS, type SavedCombo, type Segment } from '../lib/library';
+import { groupOf, highlight, isSavedCombos, patternSegments, positionOf, POSITIONS, UNGROUPED, type SavedCombo, type Segment } from '../lib/library';
 import { Providers } from './Providers';
 import { cx, Segmented, useToast } from './ui';
 
 const ALL = '全部';
 const SLOT_CHIPS = ['[topic]', '[reason 1]', '[result]', '[data]', '[scene]'];
+const byUngroupedLast = (a: string, b: string) => Number(a === UNGROUPED) - Number(b === UNGROUPED) || a.localeCompare(b, 'zh-CN');
 const TAB_LABEL: Record<Subject, string> = { english: COPY.english.tab, politics: COPY.politics.tab };
 
 export function LibraryPage() {
@@ -57,6 +58,8 @@ function LibraryBody({ subject, onSubject }: { subject: Subject; onSubject: (sub
 
   const [scope, setScope] = useState('');
   const [search, setSearch] = useState('');
+  const [essayGroup, setEssayGroup] = useState(ALL);
+  const [essayTag, setEssayTag] = useState(ALL);
   const [category, setCategory] = useState(ALL);
   const [basket, setBasket] = useState<string[]>([]);
   const [saveName, setSaveName] = useState('');
@@ -77,13 +80,29 @@ function LibraryBody({ subject, onSubject }: { subject: Subject; onSubject: (sub
 
   const needle = search.trim().toLowerCase();
   const matched = items.filter((item) => !needle || `${item.pattern} ${item.usage} ${item.example} ${item.source?.title ?? ''}`.toLowerCase().includes(needle));
-  const shown = matched.filter((item) => category === ALL || item.category === category);
-  const categories = [ALL, ...new Set([...TEMPLATE_CATEGORIES[subject], ...items.map((item) => item.category)])];
-  const count = (name: string) => (name === ALL ? matched.length : matched.filter((item) => item.category === name).length);
-  const groups = categories
+
+  // 两级筛选：作文分类（来源作答的分类）→ 主题标签（来源作答的主题）
+  const groupNames = [...new Set(matched.map((item) => groupOf(item.source)))].sort(byUngroupedLast);
+  const inGroup = matched.filter((item) => essayGroup === ALL || groupOf(item.source) === essayGroup);
+  const tagCounts = new Map<string, number>();
+  for (const item of inGroup) for (const name of item.source?.tags ?? []) tagCounts.set(name, (tagCounts.get(name) ?? 0) + 1);
+  const tagNames = [...tagCounts].sort((a, b) => b[1] - a[1] || a[0].localeCompare(b[0], 'zh-CN')).map(([name]) => name);
+  const byTag = inGroup.filter((item) => essayTag === ALL || item.source?.tags.includes(essayTag));
+
+  // 句型类别（开头破题、原因分析…）在两级筛选之内再细分
+  const sentenceCategories = [ALL, ...new Set([...TEMPLATE_CATEGORIES[subject], ...byTag.map((item) => item.category)])];
+  const shown = byTag.filter((item) => category === ALL || item.category === category);
+  const countSentence = (name: string) => (name === ALL ? byTag.length : byTag.filter((item) => item.category === name).length);
+  const groups = sentenceCategories
     .filter((name) => name !== ALL)
     .map((name) => ({ name, items: shown.filter((item) => item.category === name) }))
-    .filter((group) => group.items.length);
+    .filter((entry) => entry.items.length);
+
+  function pickGroup(next: string) {
+    setEssayGroup(next);
+    setEssayTag(ALL);
+  }
+  const filterLabel = [essayGroup !== ALL && essayGroup, essayTag !== ALL && `#${essayTag}`].filter(Boolean).join(' · ');
 
   const basketItems = basket.map((id) => byId.get(id)).filter((item): item is Template => Boolean(item));
   const sections = POSITIONS.map((position) => ({ ...position, items: basketItems.filter((item) => positionOf(item) === position.name) }));
@@ -183,25 +202,29 @@ function LibraryBody({ subject, onSubject }: { subject: Subject; onSubject: (sub
         {/* 类别 + 我的组合 */}
         <aside className="hidden min-h-0 flex-col gap-5 overflow-y-auto border-r border-zinc-200 bg-white px-3 py-4 lg:flex">
           <div className="flex flex-col gap-0.5">
-            <RailTitle>类别</RailTitle>
-            {categories.map((name) => {
-              const total = count(name);
-              return (
-                <button
-                  key={name}
-                  type="button"
-                  onClick={() => setCategory(name)}
-                  className={cx(
-                    'flex items-center justify-between gap-2 rounded px-2 py-1.5 text-left text-xs',
-                    name === category ? 'bg-accent-soft font-bold text-accent-strong' : 'text-zinc-700 hover:bg-accent-wash',
-                    !total && name !== ALL && 'opacity-45',
-                  )}
-                >
+            <RailTitle>作文分类</RailTitle>
+            <RailItem active={essayGroup === ALL} count={matched.length} onClick={() => pickGroup(ALL)}>
+              {ALL}
+            </RailItem>
+            {groupNames.map((name) => (
+              <div key={name} className="flex flex-col gap-0.5">
+                <RailItem active={essayGroup === name} count={matched.filter((item) => groupOf(item.source) === name).length} onClick={() => pickGroup(name)}>
                   {name}
-                  <span className="text-[11px] text-zinc-400 tabular-nums">{total}</span>
-                </button>
-              );
-            })}
+                </RailItem>
+                {essayGroup === name && (
+                  <div className="ml-3 flex flex-col gap-0.5 border-l border-zinc-200 pl-1.5">
+                    <RailItem small active={essayTag === ALL} count={inGroup.length} onClick={() => setEssayTag(ALL)}>
+                      全部主题
+                    </RailItem>
+                    {tagNames.map((tagName) => (
+                      <RailItem small key={tagName} active={essayTag === tagName} count={tagCounts.get(tagName) ?? 0} onClick={() => setEssayTag(tagName)}>
+                        {tagName}
+                      </RailItem>
+                    ))}
+                  </div>
+                )}
+              </div>
+            ))}
           </div>
           <div className="mt-auto flex flex-col gap-1 border-t border-zinc-200 pt-3.5">
             <RailTitle>我的组合</RailTitle>
@@ -255,7 +278,7 @@ function LibraryBody({ subject, onSubject }: { subject: Subject; onSubject: (sub
               <kbd className="rounded border border-zinc-200 px-1.5 font-mono text-[11px] text-zinc-400">/</kbd>
             </label>
             <div className="flex flex-wrap items-center gap-1.5 text-xs text-zinc-500">
-              <span>{needle ? `“${search.trim()}” 找到 ${shown.length} 条` : `${shown.length} 条 · 按类别聚合`}</span>
+              <span>{needle ? `“${search.trim()}” 找到 ${shown.length} 条` : `${shown.length} 条${filterLabel ? ` · ${filterLabel}` : ''} · 按句型聚合`}</span>
               {groups.map((group) => (
                 <a key={group.name} href={`#g-${group.name}`} className="rounded-full bg-accent-wash px-2 py-0.5 text-[11px] font-bold text-accent-strong hover:bg-accent-soft">
                   {group.name} {group.items.length}
@@ -272,6 +295,12 @@ function LibraryBody({ subject, onSubject }: { subject: Subject; onSubject: (sub
                 </>
               )}
             </div>
+          </div>
+
+          <div className="flex flex-col gap-2 border-b border-zinc-200 bg-white px-5 pb-3">
+            <ChipRow label="作文分类" values={[ALL, ...groupNames]} value={essayGroup} onPick={pickGroup} className="lg:hidden" />
+            {essayGroup !== ALL && <ChipRow label="主题" values={[ALL, ...tagNames]} value={essayTag} onPick={setEssayTag} className="lg:hidden" />}
+            <ChipRow label="句型" values={sentenceCategories} value={category} onPick={setCategory} counts={countSentence} />
           </div>
 
           <div className="min-h-0 flex-1 overflow-y-auto px-5 pt-5 pb-10">
@@ -318,7 +347,7 @@ function LibraryBody({ subject, onSubject }: { subject: Subject; onSubject: (sub
               !groups.length && (
                 <div className="grid justify-items-center gap-2 px-5 py-16 text-center text-[13px] text-zinc-500">
                   {items.length ? <SearchX className="size-7 text-accent" /> : <BookMarked className="size-7 text-accent" />}
-                  <p>{items.length ? `没有匹配${needle ? `“${search.trim()}”` : ''}的${copy.noun}。试试换个关键词，或清除类别筛选。` : copy.empty}</p>
+                  <p>{items.length ? `没有匹配${needle ? `“${search.trim()}”` : ''}的${copy.noun}。试试换个关键词，或清除分类、主题与句型筛选。` : copy.empty}</p>
                 </div>
               )
             )}
@@ -379,6 +408,47 @@ function LibraryBody({ subject, onSubject }: { subject: Subject; onSubject: (sub
           </div>
         </aside>
       </div>
+    </div>
+  );
+}
+
+function RailItem({ active, count, small, onClick, children }: { active: boolean; count: number; small?: boolean; onClick: () => void; children: React.ReactNode }) {
+  return (
+    <button
+      type="button"
+      onClick={onClick}
+      aria-pressed={active}
+      className={cx(
+        'flex items-center justify-between gap-2 rounded px-2 py-1.5 text-left',
+        small ? 'text-[11px]' : 'text-xs',
+        active ? 'bg-accent-soft font-bold text-accent-strong' : 'text-zinc-700 hover:bg-accent-wash',
+      )}
+    >
+      <span className="truncate">{children}</span>
+      <span className="text-[11px] text-zinc-400 tabular-nums">{count}</span>
+    </button>
+  );
+}
+
+function ChipRow({ label, values, value, onPick, counts, className }: { label: string; values: string[]; value: string; onPick: (value: string) => void; counts?: (value: string) => number; className?: string }) {
+  return (
+    <div className={cx('flex flex-wrap items-center gap-1', className)}>
+      <span className="mr-1 text-[11px] text-zinc-400">{label}</span>
+      {values.map((name) => {
+        const total = counts?.(name);
+        return (
+          <button
+            key={name}
+            type="button"
+            aria-pressed={name === value}
+            onClick={() => onPick(name)}
+            className={cx('rounded px-2 py-0.5 text-xs', name === value ? 'bg-accent-soft font-bold text-accent-strong' : 'text-zinc-500 hover:bg-zinc-100', total === 0 && name !== ALL && 'opacity-45')}
+          >
+            {name}
+            {total !== undefined && <span className="ml-1 text-[11px] text-zinc-400 tabular-nums">{total}</span>}
+          </button>
+        );
+      })}
     </div>
   );
 }

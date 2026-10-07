@@ -1,6 +1,8 @@
+import { categoryError, inferCategory, normalizeTags, type EssayType } from '@essay/domain';
+
 /** 极简 IndexedDB 封装：每个对象仓库一个 keyPath，按需建索引 */
 const DB_NAME = 'essay-eval';
-const DB_VERSION = 1;
+const DB_VERSION = 2;
 
 export const STORES = {
   essays: 'essays',
@@ -12,14 +14,33 @@ export const STORES = {
 } as const;
 export type StoreName = (typeof STORES)[keyof typeof STORES];
 
+/** 旧作答补全分类与主题标签：原有的自由文本分类保留为标签，没有标签的归入“待归类” */
+function withClassification<T extends { type: EssayType; title: string; prompt: string; category?: string; tags?: string[] }>(essay: T): T {
+  const legacy = essay.category ?? '';
+  const valid = !categoryError(essay.type, legacy);
+  const tags = normalizeTags([...(essay.tags ?? []), ...(!valid && legacy ? [legacy] : [])]);
+  return { ...essay, category: valid ? legacy : inferCategory(essay.type, essay.title, essay.prompt), tags: tags.length ? tags : ['待归类'] };
+}
+
 let opened: Promise<IDBDatabase> | undefined;
 
 function open(): Promise<IDBDatabase> {
   opened ??= new Promise((resolve, reject) => {
     requestPersistentStorage();
     const request = indexedDB.open(DB_NAME, DB_VERSION);
-    request.onupgradeneeded = () => {
+    request.onupgradeneeded = (event) => {
       const db = request.result;
+      if (event.oldVersion >= 1) {
+        // v2：作答必须有分类与主题标签，为已有作答增补
+        const essays = request.transaction!.objectStore(STORES.essays);
+        essays.openCursor().onsuccess = (found) => {
+          const cursor = (found.target as IDBRequest<IDBCursorWithValue | null>).result;
+          if (!cursor) return;
+          cursor.update(withClassification(cursor.value));
+          cursor.continue();
+        };
+        return;
+      }
       db.createObjectStore(STORES.essays, { keyPath: 'id' });
       db.createObjectStore(STORES.versions, { keyPath: 'id' }).createIndex('essayId', 'essayId');
       db.createObjectStore(STORES.evaluations, { keyPath: 'id' }).createIndex('essayId', 'essayId');

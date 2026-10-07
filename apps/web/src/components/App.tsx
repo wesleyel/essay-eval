@@ -1,4 +1,4 @@
-import { essayKind, isSubject, subjectOfType, type CreateEssayInput, type EssaySummary, type EssayType, type Subject } from '@essay/domain';
+import { isSubject, type CreateEssayInput, type EssaySummary, type EssayType, type Subject } from '@essay/domain';
 import { useIsMutating } from '@tanstack/react-query';
 import { AlertCircle, Loader2, PanelLeftOpen, RefreshCw, Sparkles } from 'lucide-react';
 import { useEffect, useState } from 'react';
@@ -8,6 +8,7 @@ import { api } from '../lib/api';
 import { COPY } from '../lib/copy';
 import { downloadBackup } from '../lib/export';
 import { errorMessage } from '../lib/http';
+import { NewEssayDialog } from './Classification';
 import { Providers } from './Providers';
 import { SettingsDialog } from './SettingsDialog';
 import { Sidebar } from './Sidebar';
@@ -22,7 +23,7 @@ export function App() {
   );
 }
 
-type DialogKind = 'settings';
+type DialogKind = 'settings' | 'create';
 const isWide = () => window.matchMedia('(min-width: 1280px)').matches;
 
 function Workbench() {
@@ -31,6 +32,7 @@ function Workbench() {
   const [selected, setSelected] = useState<Partial<Record<Subject, string>>>({});
   const [sidebarOpen, setSidebarOpen] = useState(isWide);
   const [dialog, setDialog] = useState<DialogKind | null>(null);
+  const [newType, setNewType] = useState<EssayType>();
   const copy = COPY[subject];
 
   const list = useEssayList(subject);
@@ -63,9 +65,19 @@ function Workbench() {
     setDialog(null);
   }
 
-  function create(type?: EssayType) {
-    const input: CreateEssayInput = type ? essayKind(subjectOfType(type), type) : { subject };
-    createEssay.mutate(input, { onSuccess: (essay) => select(essay.id), onError: (error) => notify(errorMessage(error)) });
+  function openCreate(type?: EssayType) {
+    setNewType(type);
+    setDialog('create');
+  }
+
+  function create(input: CreateEssayInput) {
+    createEssay.mutate(input, {
+      onSuccess: (essay) => {
+        setDialog(null);
+        select(essay.id);
+      },
+      onError: (error) => notify(errorMessage(error)),
+    });
   }
 
   function remove(essay: EssaySummary) {
@@ -104,7 +116,7 @@ function Workbench() {
           open={sidebarOpen}
           onClose={() => setSidebarOpen(false)}
           onSelect={select}
-          onCreate={create}
+          onCreate={openCreate}
           onDelete={remove}
         />
         <main className="relative flex min-h-0 min-w-0 flex-1 flex-col overflow-hidden">
@@ -129,7 +141,7 @@ function Workbench() {
           ) : (
             <Placeholder>
               <h2 className="text-base font-bold text-zinc-800">{copy.firstEssay}</h2>
-              <button type="button" className="btn btn-primary" disabled={createEssay.isPending} onClick={() => create()}>
+              <button type="button" className="btn btn-primary" disabled={createEssay.isPending} onClick={() => openCreate()}>
                 <Sparkles />
                 {copy.newEssay}
               </button>
@@ -139,6 +151,7 @@ function Workbench() {
       </div>
 
       {dialog === 'settings' && <SettingsDialog onClose={() => setDialog(null)} />}
+      {dialog === 'create' && <NewEssayDialog subject={subject} initialType={newType} essays={essays} pending={createEssay.isPending} onCreate={create} onClose={() => setDialog(null)} />}
     </div>
   );
 }

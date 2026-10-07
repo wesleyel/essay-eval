@@ -4,7 +4,7 @@
 
 | 方法 | 路径 | 说明 |
 | --- | --- | --- |
-| GET / POST | `/api/essays` | 列表（`?subject=&type=`）/ 新建 |
+| GET / POST | `/api/essays` | 列表（`?subject=&type=`）/ 新建（须声明 `type`、分类 `category` 与至少一个主题标签 `tags`，详见 skill 文档） |
 | GET / PATCH / DELETE | `/api/essays/:id` | 详情（含评分、版本、启发）/ 局部更新 / 删除 |
 | POST / DELETE | `/api/essays/:id/versions[/:versionId]` | 保存快照 / 删除版本 |
 | POST / DELETE | `/api/essays/:id/evaluations[/:evaluationId]` | AI 评分（同时沉淀版本）/ 删除评分 |

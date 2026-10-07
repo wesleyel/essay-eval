@@ -22,10 +22,12 @@ GitHub Pages 的纯浏览器模式没有 HTTP API，本 skill 不适用。
 |---|---|---|
 | 列表 | `GET /essays?subject=&type=` | 摘要，不含图片，带最新评分与计数 |
 | 详情 | `GET /essays/:id` | `{ essay, evaluations, versions, inspiration }`，新的在前 |
-| 创建 | `POST /essays` | `{ subject, type?, title?, category?, tags?, prompt?, promptImage?, content? }`，201 |
+| 创建 | `POST /essays` | `{ subject, type, category, tags, title?, prompt?, promptImage?, content? }`，201。`type`、`tags` 必填；有分类的题型还需 `category` |
 | 更新 | `PATCH /essays/:id` | 任意可编辑字段：`type title category tags prompt promptImage content`；其他字段会被拒绝 |
 | 删除 | `DELETE /essays/:id` | 204，级联删除版本/评分/启发 |
 
+- **分类 `category`**：题型之下的一级归类，各题型互不相交——`part-a`：`建议信`/`推荐信`/`邀请信`/`致歉信`/`申请求助信`/`咨询回复`/`通知`；`part-b`：`图画·人生态度`/`图画·品德情感`/`图画·教育成长`/`图画·文化社会`/`图表·柱状图`/`图表·表格`/`图表·组合图`；政治各题型无分类，`category` 必须为空串。题型与分类不匹配返回 400；PATCH 改 `type` 时必须同时给出新题型下的 `category`。
+- **主题标签 `tags`**：作文表述的主题（如 `["坚持","环保"]`），至少 1 个、至多 10 个、每个不超过 20 字，服务端会去空白去重。PATCH 时 `tags` 不能清空。
 - `prompt` = 题目要求，`content` = 作答正文；`promptImage` 为 `data:image/...;base64,` 且需小于约 1.2MB。
 - 字数由服务端按科目计算（英文按词，政治按字）。
 
@@ -46,7 +48,7 @@ GitHub Pages 的纯浏览器模式没有 HTTP API，本 skill 不适用。
 
 ## 语料库
 
-- `GET /templates?subject=` · `DELETE /templates/:id`
+- `GET /templates?subject=`（每条带 `source: { essayId, title, type, category, tags }`，即来源作答的分类与主题，语料库据此做两级筛选；来源被删除则为 null） · `DELETE /templates/:id`
 
 ## 设置与备份
 

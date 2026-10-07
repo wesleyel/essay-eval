@@ -8,6 +8,9 @@
  * 模型 API Key 不迁移，导入后请在设置页重新填写。
  */
 import {
+  categoryError,
+  defaultCategory,
+  normalizeTags,
   ALL_ESSAY_TYPES,
   TEMPLATE_CATEGORIES,
   TYPE_SPECS,
@@ -64,6 +67,15 @@ const isEssayType = (value: unknown): value is EssayType => (ALL_ESSAY_TYPES as 
 const essays = new Map<string, { subject: Subject; type: EssayType; title: string }>();
 const skipped: string[] = [];
 
+/** 旧数据的分类是自由文本：合法则沿用，否则取题型的默认分类，并把原文本留作主题标签 */
+function classify(type: EssayType, legacyCategory: string, legacyTags: unknown) {
+  const tags = Array.isArray(legacyTags) ? legacyTags.filter((tag): tag is string => typeof tag === 'string') : [];
+  const valid = !categoryError(type, legacyCategory);
+  if (!valid && legacyCategory) tags.push(legacyCategory);
+  const merged = normalizeTags(tags);
+  return { category: valid ? legacyCategory : defaultCategory(type), tags: JSON.stringify(merged.length ? merged : ['待归类']) };
+}
+
 for (const row of all('SELECT * FROM essays')) {
   const id = text(row.id);
   const type = row.type;
@@ -79,8 +91,7 @@ for (const row of all('SELECT * FROM essays')) {
     subject,
     type,
     title: essays.get(id)!.title,
-    category: text(row.category),
-    tags: JSON.stringify(Array.isArray(json(row.custom_tags)) ? json(row.custom_tags) : []),
+    ...classify(type, text(row.category), json(row.custom_tags)),
     prompt: text(row.prompt),
     prompt_image: null,
     content: text(row.content),

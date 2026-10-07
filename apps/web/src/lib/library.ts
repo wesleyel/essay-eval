@@ -1,4 +1,4 @@
-import type { Subject, Template } from '@essay/domain';
+import { TYPE_SPECS, type Subject, type Template } from '@essay/domain';
 
 /** 语料库独立页面的地址（新标签页打开），科目通过查询参数传递 */
 export function libraryHref(subject: Subject) {
@@ -73,4 +73,15 @@ export function isSavedCombos(value: unknown): value is SavedCombo[] {
     Array.isArray(value) &&
     value.every((item) => item && typeof item.id === 'string' && typeof item.name === 'string' && Array.isArray(item.templateIds) && typeof item.savedAt === 'string')
   );
+}
+
+export const UNGROUPED = '未归类';
+
+/**
+ * 语料库第一级筛选：来源作答的分类。政治题型没有二级分类，以题型本身分组；
+ * 来源作答已删除的语料归入“未归类”。
+ */
+export function groupOf(source: Template['source']): string {
+  if (!source) return UNGROUPED;
+  return source.category || TYPE_SPECS[source.type].shortLabel;
 }
