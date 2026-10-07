@@ -1,5 +1,5 @@
 import { essayKind, isSubject, subjectOfType, type CreateEssayInput, type EssaySummary, type EssayType, type Subject } from '@essay/domain';
-import { notifyManager, QueryClient, QueryClientProvider, useIsMutating } from '@tanstack/react-query';
+import { useIsMutating } from '@tanstack/react-query';
 import { AlertCircle, Loader2, PanelLeftOpen, RefreshCw, Sparkles } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { autosave, useCreateEssay, useDeleteEssay, useEssayDetail, useEssayList } from '../hooks/essays';
@@ -8,32 +8,21 @@ import { api } from '../lib/api';
 import { COPY } from '../lib/copy';
 import { downloadBackup } from '../lib/export';
 import { errorMessage } from '../lib/http';
-import { LibraryDialog } from './LibraryDialog';
+import { Providers } from './Providers';
 import { SettingsDialog } from './SettingsDialog';
 import { Sidebar } from './Sidebar';
-import { ToastProvider, useToast } from './ui';
+import { useToast } from './ui';
 import { Workspace } from './Workspace';
-
-// 缓存即编辑状态：输入框的值直接来自查询缓存。缓存通知默认延迟到下一个宏任务，
-// 受控输入框会先被回写成旧值，导致光标跳到末尾、原生撤销失效；这里改为同步通知。
-notifyManager.setScheduler((callback) => callback());
-
-// 不自动重新拉取，避免覆盖尚未保存的本地修改
-const queryClient = new QueryClient({
-  defaultOptions: { queries: { staleTime: Infinity, refetchOnWindowFocus: false, retry: 1 } },
-});
 
 export function App() {
   return (
-    <QueryClientProvider client={queryClient}>
-      <ToastProvider>
-        <Workbench />
-      </ToastProvider>
-    </QueryClientProvider>
+    <Providers>
+      <Workbench />
+    </Providers>
   );
 }
 
-type DialogKind = 'settings' | 'library';
+type DialogKind = 'settings';
 const isWide = () => window.matchMedia('(min-width: 1280px)').matches;
 
 function Workbench() {
@@ -136,7 +125,7 @@ function Workbench() {
               正在加载
             </Placeholder>
           ) : detail.data ? (
-            <Workspace key={detail.data.essay.id} detail={detail.data} sidebarToggle={sidebarToggle} onOpenLibrary={() => setDialog('library')} />
+            <Workspace key={detail.data.essay.id} detail={detail.data} sidebarToggle={sidebarToggle} />
           ) : (
             <Placeholder>
               <h2 className="text-base font-bold text-zinc-800">{copy.firstEssay}</h2>
@@ -150,7 +139,6 @@ function Workbench() {
       </div>
 
       {dialog === 'settings' && <SettingsDialog onClose={() => setDialog(null)} />}
-      {dialog === 'library' && <LibraryDialog subject={subject} essays={essays} onClose={() => setDialog(null)} />}
     </div>
   );
 }

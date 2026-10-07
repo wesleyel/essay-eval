@@ -5,6 +5,7 @@ import { useRef, useState, type CSSProperties, type KeyboardEvent, type PointerE
 import { useEssayEditor, useSaveStatus } from '../hooks/essays';
 import { useHistoryActions, useReview } from '../hooks/review';
 import { COPY } from '../lib/copy';
+import { libraryHref } from '../lib/library';
 import { downloadMarkdown } from '../lib/export';
 import { Editor, type EditorHandle } from './Editor';
 import { HistoryDialog } from './HistoryDialog';
@@ -18,10 +19,9 @@ interface Props {
   detail: EssayDetail;
   /** 侧栏收起时显示的展开按钮 */
   sidebarToggle: ReactNode;
-  onOpenLibrary: () => void;
 }
 
-export function Workspace({ detail, sidebarToggle, onOpenLibrary }: Props) {
+export function Workspace({ detail, sidebarToggle }: Props) {
   const { essay } = detail;
   const copy = COPY[essay.subject];
   const notify = useToast();
@@ -99,10 +99,10 @@ export function Workspace({ detail, sidebarToggle, onOpenLibrary }: Props) {
             <span className="max-sm:hidden">历史记录</span>
             {historyCount > 0 && <span className="chip border border-accent-soft bg-accent-wash text-accent-strong">{historyCount}</span>}
           </button>
-          <button type="button" className="btn" onClick={onOpenLibrary}>
+          <a className="btn" href={libraryHref(detail.essay.subject)} target="_blank" rel="noopener" title="在新页面打开">
             <BookMarked />
             <span className="max-sm:hidden">{copy.library.button}</span>
-          </button>
+          </a>
           <button type="button" className="btn btn-icon max-sm:hidden" title="导出为 Markdown" aria-label="导出为 Markdown" onClick={() => downloadMarkdown(detail)}>
             <Download />
           </button>

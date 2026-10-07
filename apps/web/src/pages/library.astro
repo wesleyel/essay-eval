@@ -1,0 +1,18 @@
+---
+import { LibraryPage } from '../components/LibraryPage';
+import '../styles/global.css';
+---
+
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="icon" type="image/svg+xml" href={`${import.meta.env.BASE_URL.replace(/\/$/, "")}/favicon.svg`} />
+    <title>语料库 · EssayPilot</title>
+    <meta name="description" content="搜索、聚合同类表达，并组合成文的写作语料库" />
+  </head>
+  <body>
+    <LibraryPage client:only="react" />
+  </body>
+</html>
