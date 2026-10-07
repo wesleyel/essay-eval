@@ -248,10 +248,18 @@ export const listExtractionSources = (subject: Subject, essayId?: string) =>
     return essays;
   });
 
-/** 插入新句式；同科目下已存在的句式被跳过。返回实际新增的条目。 */
+/**
+ * 写入一次提取的结果：每篇来源作答只保留最新一次提取，先删掉它之前提取的句式再插入；
+ * 与其他作答的句式重复时跳过。返回实际新增的条目。
+ */
 export const insertTemplates = (subject: Subject, drafts: (TemplateDraft & { source: { essayId: string; title: string } })[]): Promise<Template[]> =>
   transaction([STORES.templates, STORES.essays], 'readwrite', async (tx) => {
-    const known = new Set((await tx.all<TemplateRow>(STORES.templates)).filter((row) => row.subject === subject).map((row) => row.pattern));
+    if (!drafts.length) return [];
+    const essayIds = new Set(drafts.map((draft) => draft.source.essayId));
+    const rows = await tx.all<TemplateRow>(STORES.templates);
+    const stale = (row: TemplateRow) => row.sourceEssayId !== null && essayIds.has(row.sourceEssayId);
+    await Promise.all(rows.filter(stale).map((row) => tx.delete(STORES.templates, row.id)));
+    const known = new Set(rows.filter((row) => !stale(row) && row.subject === subject).map((row) => row.pattern));
     const createdAt = now();
     const inserted: Template[] = [];
     for (const { source, ...draft } of drafts) {

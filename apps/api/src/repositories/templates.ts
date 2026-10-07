@@ -20,15 +20,20 @@ export interface TemplateCandidate<S extends Subject> extends TemplateDraft<S> {
   source: { essayId: string; title: string };
 }
 
-/** 插入新句式；同科目下已存在的句式被跳过。返回实际新增的条目。 */
+/**
+ * 写入一次提取的结果：每篇来源作答只保留最新一次提取，先删掉它之前提取的句式再插入；
+ * 与其他作答的句式重复时跳过。返回实际新增的条目。
+ */
 export async function insertTemplates<S extends Subject>(db: Database, subject: S, candidates: TemplateCandidate<S>[]): Promise<Template[]> {
   if (!candidates.length) return [];
   const createdAt = now();
   const rows = candidates.map(({ source, ...draft }) => ({ ...draft, id: newId('template'), subject, sourceEssayId: source.essayId, createdAt }));
-  const sources = await findSources(db, [...new Set(candidates.map((item) => item.source.essayId))]);
-  // 逐条插入并忽略重复（D1 单条语句的绑定参数有上限），整体放在一个批次里
-  const [first, ...rest] = rows.map((row) => db.insert(templates).values(row).onConflictDoNothing().returning());
-  const inserted = await db.batch([first!, ...rest]);
+  const essayIds = [...new Set(candidates.map((item) => item.source.essayId))];
+  const sources = await findSources(db, essayIds);
+  // 逐条插入并忽略重复（D1 单条语句的绑定参数有上限），与清理旧句式放在同一个批次里
+  const replace = db.delete(templates).where(inArray(templates.sourceEssayId, essayIds));
+  const inserts = rows.map((row) => db.insert(templates).values(row).onConflictDoNothing().returning());
+  const [, ...inserted] = await db.batch([replace, ...inserts]);
   return inserted.flat().map((row) => toTemplate(row, row.sourceEssayId ? sources.get(row.sourceEssayId) : null));
 }
 
