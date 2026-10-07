@@ -1,7 +1,7 @@
 -- 考研政治历年分析题真题数据（自动生成，支持重复导入）
 -- 目标表：essays, versions
 
-INSERT OR REPLACE INTO essays (id, subject, type, title, category, tags, prompt, prompt_image, content, word_count, created_at, updated_at) VALUES ('real-pol-2026-q34', 'politics', 'mayuan', '2026年第34题：资本技术构成与数字技术推动生产力 (马原)', '', '["2026真题", "第34题", "马原", "资本技术构成", "资本价值构成", "资本有机构成", "科学技术是第一生产力", "新质生产力"]', '【材料分析题】（10分）
+INSERT OR REPLACE INTO essays (id, subject, type, title, category, tags, prompt, prompt_image, content, word_count, created_at, updated_at) VALUES ('real-pol-2026-q34', 'politics', 'mayuan', '2026年第34题：资本技术构成与数字技术推动生产力 (马原)', '', '["政经-资本有机构成", "马哲-生产力", "新思想-新质生产力"]', '【材料分析题】（10分）
 
 【背景材料】
 材料1
@@ -19,7 +19,7 @@ INSERT OR REPLACE INTO essays (id, subject, type, title, category, tags, prompt,
 【分析题设问】
 （1）说明资本的技术构成与资本价值构成的内在联系及发展趋势。（5 分）
 （2）运用科学技术是第一生产力的观点，说明以数字技术为核心的新兴技术如何推动生产力的发展。（5 分）', NULL, '', 0, '2026-10-05T13:23:32.693555Z', '2026-10-05T13:23:32.693555Z');
-INSERT OR REPLACE INTO essays (id, subject, type, title, category, tags, prompt, prompt_image, content, word_count, created_at, updated_at) VALUES ('real-pol-2026-q35', 'politics', 'maozhongte', '2026年第35题：做强国内大循环与推进全体人民共同富裕 (毛中特·新思想)', '', '["2026真题", "第35题", "毛中特", "习思想", "新发展格局", "国内大循环", "高质量发展", "共同富裕"]', '【材料分析题】（10分）
+INSERT OR REPLACE INTO essays (id, subject, type, title, category, tags, prompt, prompt_image, content, word_count, created_at, updated_at) VALUES ('real-pol-2026-q35', 'politics', 'maozhongte', '2026年第35题：做强国内大循环与推进全体人民共同富裕 (毛中特·新思想)', '', '["新思想-新发展格局", "新思想-共同富裕", "新思想-新发展理念"]', '【材料分析题】（10分）
 
 【背景材料】
 材料
@@ -35,7 +35,7 @@ INSERT OR REPLACE INTO essays (id, subject, type, title, category, tags, prompt,
 【分析题设问】
 （1）建议强调“十五五”时期要以新发展理念引领发展。做强国内大循环，畅通国内国际双循环。结合国内国际形势变化和我国经济社会发展态势，论述强调做强国内大循环，畅通国内国际双循环的重要意义。（5 分）
 （2）习近平总书记就建议稿向全会作说明时指出，建议稿在指导思想中突出强调全体人民共同富裕。迈出坚实步伐，这是指导“十五五”时期社会经济社会发展的一个总体性要求。如何理解把全体人民共同富裕迈出坚实步伐，作为指导“十五五”时期经济社会发展的一个总体性要求。（5 分）', NULL, '', 0, '2026-10-05T13:23:32.693555Z', '2026-10-05T13:23:32.693555Z');
-INSERT OR REPLACE INTO essays (id, subject, type, title, category, tags, prompt, prompt_image, content, word_count, created_at, updated_at) VALUES ('real-pol-2026-q36', 'politics', 'shigang', '2026年第36题：以经济建设为中心与中国式现代化探索 (史纲)', '', '["2026真题", "第36题", "史纲", "以经济建设为中心", "中国式现代化", "毛泽东思想", "马克思主义中国化时代化"]', '【材料分析题】（10分）
+INSERT OR REPLACE INTO essays (id, subject, type, title, category, tags, prompt, prompt_image, content, word_count, created_at, updated_at) VALUES ('real-pol-2026-q36', 'politics', 'shigang', '2026年第36题：以经济建设为中心与中国式现代化探索 (史纲)', '', '["史纲-新民主主义革命", "史纲-社会主义建设探索", "新思想-中国式现代化", "毛概-马克思主义中国化"]', '【材料分析题】（10分）
 
 【背景材料】
 材料1
@@ -61,7 +61,7 @@ INSERT OR REPLACE INTO essays (id, subject, type, title, category, tags, prompt,
 【分析题设问】
 （1）结合新民主主义革命和社会主义建设道路的探索过程，说明中国共产党为什么强调以经济建设为中心的现代化建设。（5 分）
 （2）中国式现代化的丰富内涵，如何推进了马克思主义中国化时代化？（5 分）', NULL, '', 0, '2026-10-05T13:23:32.693555Z', '2026-10-05T13:23:32.693555Z');
-INSERT OR REPLACE INTO essays (id, subject, type, title, category, tags, prompt, prompt_image, content, word_count, created_at, updated_at) VALUES ('real-pol-2026-q37', 'politics', 'defa', '2026年第37题：弘扬见义勇为精神与法治保障作用 (德法)', '', '["2026真题", "第37题", "德法", "见义勇为", "社会风尚", "社会主义核心价值观", "法治与德治", "正当防卫"]', '【材料分析题】（10分）
+INSERT OR REPLACE INTO essays (id, subject, type, title, category, tags, prompt, prompt_image, content, word_count, created_at, updated_at) VALUES ('real-pol-2026-q37', 'politics', 'defa', '2026年第37题：弘扬见义勇为精神与法治保障作用 (德法)', '', '["德法-道德", "德法-核心价值观", "德法-法治"]', '【材料分析题】（10分）
 
 【背景材料】
 材料
@@ -77,7 +77,7 @@ INSERT OR REPLACE INTO essays (id, subject, type, title, category, tags, prompt,
 【分析题设问】
 （1）营造良好的社会风尚，为什么要弘扬见义勇为精神。（5 分）
 （2）弘扬见义勇为的精神，法治发挥了什么作用？（5 分）', NULL, '', 0, '2026-10-05T13:23:32.693555Z', '2026-10-05T13:23:32.693555Z');
-INSERT OR REPLACE INTO essays (id, subject, type, title, category, tags, prompt, prompt_image, content, word_count, created_at, updated_at) VALUES ('real-pol-2026-q38', 'politics', 'dangdai', '2026年第38题：以“船”为喻全球治理理念与“全球南方”崛起 (当代)', '', '["2026真题", "第38题", "当代", "全球治理", "同舟共济", "人类命运共同体", "全球南方", "多边主义"]', '【材料分析题】（10分）
+INSERT OR REPLACE INTO essays (id, subject, type, title, category, tags, prompt, prompt_image, content, word_count, created_at, updated_at) VALUES ('real-pol-2026-q38', 'politics', 'dangdai', '2026年第38题：以“船”为喻全球治理理念与“全球南方”崛起 (当代)', '', '["当代-全球治理", "当代-全球南方", "当代-人类命运共同体"]', '【材料分析题】（10分）
 
 【背景材料】
 材料1
@@ -105,7 +105,7 @@ INSERT OR REPLACE INTO essays (id, subject, type, title, category, tags, prompt,
 【分析题设问】
 （1）结合中华优秀传统文化，说明习近平主席以“船”为喻所蕴含的全球治理理念。（6 分）
 （2）二战后，随着民族解放和国家独立斗争的发展，第三世界国家作为独立政治力量逐步登上国际舞台，向世界展现了它们为推动国际秩序变革所作的重大努力。当今时代，“全球南方”群体性崛起，成为推动世界多极化发展的重要力量。分析从第三世界政治觉醒到“全球南方”群体性崛起，发展中国家是如何影响世界秩序的。（4 分）', NULL, '', 0, '2026-10-05T13:23:32.693555Z', '2026-10-05T13:23:32.693555Z');
-INSERT OR REPLACE INTO essays (id, subject, type, title, category, tags, prompt, prompt_image, content, word_count, created_at, updated_at) VALUES ('real-pol-2025-q34', 'politics', 'mayuan', '2025年第34题：真理的相对性与改革“知行辩证关系” (马原)', '', '["2025真题", "第34题", "马原", "真理的相对性与绝对性", "认识论", "顶层设计", "摸着石头过河", "知行合一"]', '【材料分析题】（10分）
+INSERT OR REPLACE INTO essays (id, subject, type, title, category, tags, prompt, prompt_image, content, word_count, created_at, updated_at) VALUES ('real-pol-2025-q34', 'politics', 'mayuan', '2025年第34题：真理的相对性与改革“知行辩证关系” (马原)', '', '["马哲-真理", "马哲-认识与实践"]', '【材料分析题】（10分）
 
 【背景材料】
 材料1
@@ -118,7 +118,7 @@ INSERT OR REPLACE INTO essays (id, subject, type, title, category, tags, prompt,
 【分析题设问】
 （1）如何理解“认识就其本性而言，或者对漫长的世代系列来说是相对的而且必然是逐步趋于完善的，或者……由于历史材料不足，甚至永远是有缺陷的和不完善的”?(5分)
 （2）试说明加强顶层设计和摸着石头过河“两手并用”蕴含着的“知”和“行”的辩证关系。(5分)', NULL, '', 0, '2026-10-05T13:23:32.693555Z', '2026-10-05T13:23:32.693555Z');
-INSERT OR REPLACE INTO essays (id, subject, type, title, category, tags, prompt, prompt_image, content, word_count, created_at, updated_at) VALUES ('real-pol-2025-q35', 'politics', 'maozhongte', '2025年第35题：“中国之制”重大制度成果与全面深化改革 (毛中特·新思想)', '', '["2025真题", "第35题", "毛中特", "习思想", "中国之制", "制度优势", "全面深化改革", "国家治理体系现代化"]', '【材料分析题】（10分）
+INSERT OR REPLACE INTO essays (id, subject, type, title, category, tags, prompt, prompt_image, content, word_count, created_at, updated_at) VALUES ('real-pol-2025-q35', 'politics', 'maozhongte', '2025年第35题：“中国之制”重大制度成果与全面深化改革 (毛中特·新思想)', '', '["新思想-全面深化改革", "新思想-国家治理", "新思想-高质量发展"]', '【材料分析题】（10分）
 
 【背景材料】
 材料1
@@ -132,7 +132,7 @@ INSERT OR REPLACE INTO essays (id, subject, type, title, category, tags, prompt,
 【分析题设问】
 （1）如何理解“新时代全面深化改革取得重大制度成果,书写了‘中国之制’新篇章”?(5分)
 （2）进一步全面深化改革为什么能够为推动高质量发展、推进中国式现代化持续注入强劲动力?(5分)', NULL, '', 0, '2026-10-05T13:23:32.693555Z', '2026-10-05T13:23:32.693555Z');
-INSERT OR REPLACE INTO essays (id, subject, type, title, category, tags, prompt, prompt_image, content, word_count, created_at, updated_at) VALUES ('real-pol-2025-q36', 'politics', 'shigang', '2025年第36题：中国人民的大联合与抗战胜利历史意义 (史纲)', '', '["2025真题", "第36题", "史纲", "抗日战争", "抗日民族统一战线", "人民大联合", "伟大抗战精神", "民族复兴"]', '【材料分析题】（10分）
+INSERT OR REPLACE INTO essays (id, subject, type, title, category, tags, prompt, prompt_image, content, word_count, created_at, updated_at) VALUES ('real-pol-2025-q36', 'politics', 'shigang', '2025年第36题：中国人民的大联合与抗战胜利历史意义 (史纲)', '', '["史纲-抗日战争", "史纲-统一战线"]', '【材料分析题】（10分）
 
 【背景材料】
 材料1
@@ -149,7 +149,7 @@ INSERT OR REPLACE INTO essays (id, subject, type, title, category, tags, prompt,
 【分析题设问】
 （1）如何理解“就广大中国人民的立场来说”，“中国人民的大联合”是战胜并消灭日本帝国主义的主要条件？(5分)
 （2）抗日战争的胜利对中华民族“从近代以来陷入深重危机走向伟大复兴”有何历史意义？(5分)', NULL, '', 0, '2026-10-05T13:23:32.693555Z', '2026-10-05T13:23:32.693555Z');
-INSERT OR REPLACE INTO essays (id, subject, type, title, category, tags, prompt, prompt_image, content, word_count, created_at, updated_at) VALUES ('real-pol-2025-q37', 'politics', 'defa', '2025年第37题：塞罕坝治沙信念与青年干事创业精神力量 (德法)', '', '["2025真题", "第37题", "德法", "塞罕坝精神", "理想信念", "艰苦奋斗", "中国精神", "青年使命担当"]', '【材料分析题】（10分）
+INSERT OR REPLACE INTO essays (id, subject, type, title, category, tags, prompt, prompt_image, content, word_count, created_at, updated_at) VALUES ('real-pol-2025-q37', 'politics', 'defa', '2025年第37题：塞罕坝治沙信念与青年干事创业精神力量 (德法)', '', '["德法-理想信念", "德法-中国精神", "德法-人生价值"]', '【材料分析题】（10分）
 
 【背景材料】
 我国曾是沙漠化最严重的国家之一，经过持续系统治理，防沙治沙工作取得了举世瞩目的成就，也谱写了许多动人的治沙故事。
@@ -160,7 +160,7 @@ INSERT OR REPLACE INTO essays (id, subject, type, title, category, tags, prompt,
 【分析题设问】
 （1）如何理解“治沙人种下的不仅是一棵棵树，更是一种信念、一种精神”?(6分)
 （2）在干事创业中，新时代青年应从治沙人的事迹中汲取怎样的力量?(4分)', NULL, '', 0, '2026-10-05T13:23:32.693555Z', '2026-10-05T13:23:32.693555Z');
-INSERT OR REPLACE INTO essays (id, subject, type, title, category, tags, prompt, prompt_image, content, word_count, created_at, updated_at) VALUES ('real-pol-2025-q38', 'politics', 'dangdai', '2025年第38题：数字经济全球竞争与消除数字鸿沟 (当代)', '', '["2025真题", "第38题", "当代", "数字经济", "数字鸿沟", "网络空间治理", "全球发展倡议", "数字丝绸之路"]', '【材料分析题】（10分）
+INSERT OR REPLACE INTO essays (id, subject, type, title, category, tags, prompt, prompt_image, content, word_count, created_at, updated_at) VALUES ('real-pol-2025-q38', 'politics', 'dangdai', '2025年第38题：数字经济全球竞争与消除数字鸿沟 (当代)', '', '["当代-数字经济", "当代-网络空间治理", "当代-经济全球化"]', '【材料分析题】（10分）
 
 【背景材料】
 材料1
@@ -175,7 +175,7 @@ INSERT OR REPLACE INTO essays (id, subject, type, title, category, tags, prompt,
 （1）如何理解数字经济“正在成为重组全球要素资源、重塑全球经济结构、改变全球竞争格局的关键力量”?(6分)
 （2）弥补“数字鸿沟”,迈进更加美好的“数字未来”,为什么要“加快推动网络空间创新发展、安全发展、普惠发展”?(4分)
 ', NULL, '', 0, '2026-10-05T13:23:32.693555Z', '2026-10-05T13:23:32.693555Z');
-INSERT OR REPLACE INTO essays (id, subject, type, title, category, tags, prompt, prompt_image, content, word_count, created_at, updated_at) VALUES ('real-pol-2024-q34', 'politics', 'mayuan', '2024年第34题：大兴调查研究认识论与矛盾普遍性特殊性 (马原)', '', '["2024真题", "第34题", "马原", "调查研究", "实践与认识", "矛盾的普遍性与特殊性", "具体问题具体分析"]', '【材料分析题】（10分）
+INSERT OR REPLACE INTO essays (id, subject, type, title, category, tags, prompt, prompt_image, content, word_count, created_at, updated_at) VALUES ('real-pol-2024-q34', 'politics', 'mayuan', '2024年第34题：大兴调查研究认识论与矛盾普遍性特殊性 (马原)', '', '["马哲-认识与实践", "马哲-矛盾"]', '【材料分析题】（10分）
 
 【背景材料】
 为全面贯彻落实党的二十大精神，党中央决定，把大兴调查研究作为在全党开展主题教育的重要内容。习近平总书记就“深入调查研究”提出明确要求，强调既要学会调查，也要擅长研究，“在调查的基础上深化研究，提高调研成果质量，切实把调研成果转化为解决问题、改进工作的实际举措”。这为全党大兴调查研究提供了重要遵循。
@@ -187,7 +187,7 @@ INSERT OR REPLACE INTO essays (id, subject, type, title, category, tags, prompt,
 （1）如何理解“调查是全面、客观、准确掌握情况的过程，并不自然产生科学观点、得出
 正确结论”？（5分）
 （2）为什么“解决一个问题”能推动“解决一类问题”？（5分）', NULL, '', 0, '2026-10-05T13:23:32.693555Z', '2026-10-05T13:23:32.693555Z');
-INSERT OR REPLACE INTO essays (id, subject, type, title, category, tags, prompt, prompt_image, content, word_count, created_at, updated_at) VALUES ('real-pol-2024-q35', 'politics', 'maozhongte', '2024年第35题：生态环境支撑高质量发展与和谐共生现代化 (毛中特·新思想)', '', '["2024真题", "第35题", "毛中特", "习思想", "生态文明建设", "高质量发展", "绿水青山就是金山银山", "人与自然和谐共生"]', '【材料分析题】（10分）
+INSERT OR REPLACE INTO essays (id, subject, type, title, category, tags, prompt, prompt_image, content, word_count, created_at, updated_at) VALUES ('real-pol-2024-q35', 'politics', 'maozhongte', '2024年第35题：生态环境支撑高质量发展与和谐共生现代化 (毛中特·新思想)', '', '["新思想-生态文明", "新思想-中国式现代化", "当代-全球治理"]', '【材料分析题】（10分）
 
 【背景材料】
 党的十八大以来，在习近平生态文明思想科学指引下，党领导人民站在人与自然和谐共生的高度谋划发展，推进中国式现代化，我国生态文明建设从理论到实践都发生了历史性、转折性、全局性变化，创造了举世瞩目的生态奇迹和绿色发展奇迹。
@@ -200,7 +200,7 @@ INSERT OR REPLACE INTO essays (id, subject, type, title, category, tags, prompt,
 （1）如何理解“以高品质生态环境支撑高质量发展，加快推进人与自然和谐共生的现代
 化”？（6分）
 （2）从人与自然和谐共生的现代化角度，分析中国式现代化道路的世界意义。（4分）', NULL, '', 0, '2026-10-05T13:23:32.693555Z', '2026-10-05T13:23:32.693555Z');
-INSERT OR REPLACE INTO essays (id, subject, type, title, category, tags, prompt, prompt_image, content, word_count, created_at, updated_at) VALUES ('real-pol-2024-q36', 'politics', 'shigang', '2024年第36题：新文化运动与党的文化探索及文化主体性 (史纲)', '', '["2024真题", "第36题", "史纲", "新文化运动", "马克思主义传播", "古今中西之争", "文化主体性", "两个结合"]', '【材料分析题】（10分）
+INSERT OR REPLACE INTO essays (id, subject, type, title, category, tags, prompt, prompt_image, content, word_count, created_at, updated_at) VALUES ('real-pol-2024-q36', 'politics', 'shigang', '2024年第36题：新文化运动与党的文化探索及文化主体性 (史纲)', '', '["史纲-新文化运动", "史纲-新民主主义文化", "新思想-两个结合"]', '【材料分析题】（10分）
 
 【背景材料】
 材料1
@@ -224,7 +224,7 @@ INSERT OR REPLACE INTO essays (id, subject, type, title, category, tags, prompt,
 （1）结合新文化运动以来的历史，分析中国共产党对中国文化发展方向的探索及其意义。
 （6分）
 （2）为什么说“我们比以往任何一个时代都更有条件破解‘古今中西之争’”？（4分）', NULL, '', 0, '2026-10-05T13:23:32.693555Z', '2026-10-05T13:23:32.693555Z');
-INSERT OR REPLACE INTO essays (id, subject, type, title, category, tags, prompt, prompt_image, content, word_count, created_at, updated_at) VALUES ('real-pol-2024-q37', 'politics', 'defa', '2024年第37题：科技小院“自找苦吃”与青年创造人生价值 (德法)', '', '["2024真题", "第37题", "德法", "科技小院", "自找苦吃", "人生价值", "艰苦奋斗", "青年担当", "乡村振兴"]', '【材料分析题】（10分）
+INSERT OR REPLACE INTO essays (id, subject, type, title, category, tags, prompt, prompt_image, content, word_count, created_at, updated_at) VALUES ('real-pol-2024-q37', 'politics', 'defa', '2024年第37题：科技小院“自找苦吃”与青年创造人生价值 (德法)', '', '["德法-理想信念", "德法-人生价值"]', '【材料分析题】（10分）
 
 【背景材料】
 材料1
@@ -241,7 +241,7 @@ INSERT OR REPLACE INTO essays (id, subject, type, title, category, tags, prompt,
 【分析题设问】
 （1）从实现理想的角度，说明“越是美好的梦想，越需要发扬‘自找苦吃’的精神”。（6分）
 （2）从创造有意义人生的角度，分析新时代青年如何在“自找苦吃”中“收获成功”。（4分）', NULL, '', 0, '2026-10-05T13:23:32.693555Z', '2026-10-05T13:23:32.693555Z');
-INSERT OR REPLACE INTO essays (id, subject, type, title, category, tags, prompt, prompt_image, content, word_count, created_at, updated_at) VALUES ('real-pol-2024-q38', 'politics', 'dangdai', '2024年第38题：“一带一路”三联通与提升国际传播能力 (当代)', '', '["2024真题", "第38题", "当代", "一带一路", "硬联通软联通心联通", "国际传播能力", "讲好中国故事", "互联互通"]', '【材料分析题】（10分）
+INSERT OR REPLACE INTO essays (id, subject, type, title, category, tags, prompt, prompt_image, content, word_count, created_at, updated_at) VALUES ('real-pol-2024-q38', 'politics', 'dangdai', '2024年第38题：“一带一路”三联通与提升国际传播能力 (当代)', '', '["当代-一带一路", "当代-国际传播"]', '【材料分析题】（10分）
 
 【背景材料】
 推动共建“一带一路”，既有基础设施的“硬联通”、规则标准的“软联通”，也有共建国家人民的“心联通”。一批经济社会效益好的“小而美”项目，成为对外合作的优先事项，拉近了共建“一带一路”国家民众心与心的距离，为他们带来了实实在在的获得感、幸福感。
@@ -260,7 +260,7 @@ INSERT OR REPLACE INTO essays (id, subject, type, title, category, tags, prompt,
 联通”，也能架起世界各国人民“心联通”的桥梁？（6分）
 （2）“让国际社会更好地理解共建‘一带一路’倡议”对于我们讲好中国故事、提升国际传播能力有何启示？（4分）
 ', NULL, '', 0, '2026-10-05T13:23:32.693555Z', '2026-10-05T13:23:32.693555Z');
-INSERT OR REPLACE INTO essays (id, subject, type, title, category, tags, prompt, prompt_image, content, word_count, created_at, updated_at) VALUES ('real-pol-2023-q34', 'politics', 'mayuan', '2023年第34题：盐碱地治理实践与认识辩证运动及系统观念 (马原)', '', '["2023真题", "第34题", "马原", "实践与认识的辩证运动", "系统观念", "客观规律性与主观能动性", "盐碱地治理"]', '【材料分析题】（10分）
+INSERT OR REPLACE INTO essays (id, subject, type, title, category, tags, prompt, prompt_image, content, word_count, created_at, updated_at) VALUES ('real-pol-2023-q34', 'politics', 'mayuan', '2023年第34题：盐碱地治理实践与认识辩证运动及系统观念 (马原)', '', '["马哲-认识与实践", "马哲-联系与系统"]', '【材料分析题】（10分）
 
 【背景材料】
 党的二十大报告指出:“全面建设社会主义现代化国家，最艰巨最繁重的任务仍然在农村。”建设农业强国是一项长期而艰巨的历史任务，要“确保中国人的饭碗牢牢端在自己手中”，就要深入实施“藏粮于地、藏粮于技”战略，加强高标准农田建设和中低产田改造，综合利用盐碱地。
@@ -271,7 +271,7 @@ INSERT OR REPLACE INTO essays (id, subject, type, title, category, tags, prompt,
 【分析题设问】
 （1）从实践与认识的辩证运动角度，说明科学家将“盐碱荒地”改造成“生态良田”所体现的认识论原理。(6分)
 （2）为什么盐碱地改良“必须坚持系统观念”？(4分)', NULL, '', 0, '2026-10-05T13:23:32.693555Z', '2026-10-05T13:23:32.693555Z');
-INSERT OR REPLACE INTO essays (id, subject, type, title, category, tags, prompt, prompt_image, content, word_count, created_at, updated_at) VALUES ('real-pol-2023-q35', 'politics', 'maozhongte', '2023年第35题：以人民为中心发展思想与中国式现代化拓展 (毛中特·新思想)', '', '["2023真题", "第35题", "毛中特", "习思想", "新时代十年", "以人民为中心", "中国式现代化", "历史性成就"]', '【材料分析题】（10分）
+INSERT OR REPLACE INTO essays (id, subject, type, title, category, tags, prompt, prompt_image, content, word_count, created_at, updated_at) VALUES ('real-pol-2023-q35', 'politics', 'maozhongte', '2023年第35题：以人民为中心发展思想与中国式现代化拓展 (毛中特·新思想)', '', '["新思想-以人民为中心", "新思想-中国式现代化"]', '【材料分析题】（10分）
 
 【背景材料】
 材料1
@@ -287,7 +287,7 @@ INSERT OR REPLACE INTO essays (id, subject, type, title, category, tags, prompt,
 【分析题设问】
 （1）分析新时代十年“党和国家事业取得历史性成就、发生历史性变革”所体现的以人民为中心的发展思想。（5分）
 （2）中国式现代化是中国共产党和中国人民长期实践探索的成果，是一项伟大而艰巨的事业。结合党的十八大以来的理论和实践创新突破，分析新时代党怎样“成功推进和拓展了中国式现代化”。（5分）', NULL, '', 0, '2026-10-05T13:23:32.693555Z', '2026-10-05T13:23:32.693555Z');
-INSERT OR REPLACE INTO essays (id, subject, type, title, category, tags, prompt, prompt_image, content, word_count, created_at, updated_at) VALUES ('real-pol-2023-q36', 'politics', 'shigang', '2023年第36题：党的七大“喊看齐”与团结奋斗精神标识 (史纲)', '', '["2023真题", "第36题", "史纲", "中共七大", "喊看齐", "党的团结统一", "延安整风", "团结奋斗"]', '【材料分析题】（10分）
+INSERT OR REPLACE INTO essays (id, subject, type, title, category, tags, prompt, prompt_image, content, word_count, created_at, updated_at) VALUES ('real-pol-2023-q36', 'politics', 'shigang', '2023年第36题：党的七大“喊看齐”与团结奋斗精神标识 (史纲)', '', '["史纲-党的建设", "史纲-百年奋斗经验"]', '【材料分析题】（10分）
 
 【背景材料】
 材料1
@@ -314,7 +314,7 @@ INSERT OR REPLACE INTO essays (id, subject, type, title, category, tags, prompt,
 【分析题设问】
 （1）结合当时的形势和党的任务，说明毛泽东强调“有了偏差，就喊看齐”的重要性。(5分)
 （2）团结奋斗是中国共产党和中国人民最显著的精神标识。如何理解“一百年来，党和人民取得的一切成就都是团结奋斗的结果”?(5分)', NULL, '', 0, '2026-10-05T13:23:32.693555Z', '2026-10-05T13:23:32.693555Z');
-INSERT OR REPLACE INTO essays (id, subject, type, title, category, tags, prompt, prompt_image, content, word_count, created_at, updated_at) VALUES ('real-pol-2023-q37', 'politics', 'defa', '2023年第37题：弘扬科学家精神与青年投身科技创新创造 (德法)', '', '["2023真题", "第37题", "德法", "科学家精神", "钱七虎", "爱国主义", "创新创造", "青年理想"]', '【材料分析题】（10分）
+INSERT OR REPLACE INTO essays (id, subject, type, title, category, tags, prompt, prompt_image, content, word_count, created_at, updated_at) VALUES ('real-pol-2023-q37', 'politics', 'defa', '2023年第37题：弘扬科学家精神与青年投身科技创新创造 (德法)', '', '["德法-爱国主义", "德法-中国精神", "德法-青年创新"]', '【材料分析题】（10分）
 
 【背景材料】
 材料1
@@ -332,7 +332,7 @@ INSERT OR REPLACE INTO essays (id, subject, type, title, category, tags, prompt,
 【分析题设问】
 （1）为什么新时代“更需要继续发扬以爱国主义为底色的科学家精神”?(6分)
 （2）钱七虎为国铸盾的科学实践，对当代青年进行创新创造有何启示?(4分)', NULL, '', 0, '2026-10-05T13:23:32.693555Z', '2026-10-05T13:23:32.693555Z');
-INSERT OR REPLACE INTO essays (id, subject, type, title, category, tags, prompt, prompt_image, content, word_count, created_at, updated_at) VALUES ('real-pol-2023-q38', 'politics', 'dangdai', '2023年第38题：十字路口的世界与中国携手发展的大国担当 (当代)', '', '["2023真题", "第38题", "当代", "历史十字路口", "大国担当", "全球发展倡议", "南南合作", "共同繁荣"]', '【材料分析题】（10分）
+INSERT OR REPLACE INTO essays (id, subject, type, title, category, tags, prompt, prompt_image, content, word_count, created_at, updated_at) VALUES ('real-pol-2023-q38', 'politics', 'dangdai', '2023年第38题：十字路口的世界与中国携手发展的大国担当 (当代)', '', '["当代-世界格局", "当代-中国外交", "当代-南南合作"]', '【材料分析题】（10分）
 
 【背景材料】
 材料1
@@ -349,7 +349,7 @@ INSERT OR REPLACE INTO essays (id, subject, type, title, category, tags, prompt,
 【分析题设问】
 （1）为什么说“世界又一次站在历史的十字路口”?（5分）
 （2）中国在帮助发展中国家共同发展方面所作的巨大贡献，体现出怎样的外交理念与大国担当?（5分）', NULL, '', 0, '2026-10-05T13:23:32.693555Z', '2026-10-05T13:23:32.693555Z');
-INSERT OR REPLACE INTO essays (id, subject, type, title, category, tags, prompt, prompt_image, content, word_count, created_at, updated_at) VALUES ('real-pol-2022-q34', 'politics', 'mayuan', '2022年第34题：必然与偶然辩证关系与辩证思维方法 (马原)', '', '["2022真题", "第34题", "马原", "必然性与偶然性", "辩证思维", "底线思维", "小概率事件"]', '【材料分析题】（10分）
+INSERT OR REPLACE INTO essays (id, subject, type, title, category, tags, prompt, prompt_image, content, word_count, created_at, updated_at) VALUES ('real-pol-2022-q34', 'politics', 'mayuan', '2022年第34题：必然与偶然辩证关系与辩证思维方法 (马原)', '', '["马哲-必然与偶然", "马哲-辩证思维"]', '【材料分析题】（10分）
 
 【背景材料】
 材料1
@@ -363,7 +363,7 @@ INSERT OR REPLACE INTO essays (id, subject, type, title, category, tags, prompt,
 【分析题设问】
 （1）运用必然与偶然的辩证关系原理，说明小概率事件并非零概率事件。（5分）
 （2）面对复杂局面应如何运用好辩证思维？（5分）', NULL, '', 0, '2026-10-05T13:23:32.693555Z', '2026-10-05T13:23:32.693555Z');
-INSERT OR REPLACE INTO essays (id, subject, type, title, category, tags, prompt, prompt_image, content, word_count, created_at, updated_at) VALUES ('real-pol-2022-q35', 'politics', 'maozhongte', '2022年第35题：党的百年理论创新史与当代中国马克思主义 (毛中特·新思想)', '', '["2022真题", "第35题", "毛中特", "习思想", "理论创新史", "马克思主义中国化", "第三次飞跃", "两个确立"]', '【材料分析题】（10分）
+INSERT OR REPLACE INTO essays (id, subject, type, title, category, tags, prompt, prompt_image, content, word_count, created_at, updated_at) VALUES ('real-pol-2022-q35', 'politics', 'maozhongte', '2022年第35题：党的百年理论创新史与当代中国马克思主义 (毛中特·新思想)', '', '["毛概-马克思主义中国化", "新思想-历史地位"]', '【材料分析题】（10分）
 
 【背景材料】
 在中国共产党成立100周年的重要时刻，在党和人民胜利实现第一个百年奋斗目标、全面建成小康社会，正在向着全面建成社会主义现代化强国的第二个百年奋斗目标迈进的重大历史关头，党的十九届六中全会于2021年11月8日至11日在北京胜利举行，审议通过了《中共中央关于党的百年奋斗重大成就和历史经验的决议》。全会聚焦总结党的百年奋斗重大成就和历史经验，深入研究我们党不断推进马克思主义中国化的百年历程，把“坚持理论创新”概括为党百年奋斗的十条历史经验之一，深刻指出党的百年奋斗展示了马克思主义的强大生命力。
@@ -374,7 +374,7 @@ INSERT OR REPLACE INTO essays (id, subject, type, title, category, tags, prompt,
 【分析题设问】
 （1）怎样认识我们党的历史“就是一部不断推进理论创新、进行理论创造的历史”？（5分）
 （2）结合中华民族伟大复兴战略全局和世界百年未有之大变局，阐述如何理解“习近平新时代中国特色社会主义思想实现了马克思主义中国化的新的飞跃”？（5分）', NULL, '', 0, '2026-10-05T13:23:32.693555Z', '2026-10-05T13:23:32.693555Z');
-INSERT OR REPLACE INTO essays (id, subject, type, title, category, tags, prompt, prompt_image, content, word_count, created_at, updated_at) VALUES ('real-pol-2022-q36', 'politics', 'shigang', '2022年第36题：孙中山建国方略探索与中国共产党百年奋斗历史意义 (史纲)', '', '["2022真题", "第36题", "史纲", "孙中山", "辛亥革命", "百年奋斗历史意义", "历史必然性", "振兴中华"]', '【材料分析题】（10分）
+INSERT OR REPLACE INTO essays (id, subject, type, title, category, tags, prompt, prompt_image, content, word_count, created_at, updated_at) VALUES ('real-pol-2022-q36', 'politics', 'shigang', '2022年第36题：孙中山建国方略探索与中国共产党百年奋斗历史意义 (史纲)', '', '["史纲-旧民主主义革命", "史纲-百年奋斗经验"]', '【材料分析题】（10分）
 
 【背景材料】
 材料1
@@ -390,7 +390,7 @@ INSERT OR REPLACE INTO essays (id, subject, type, title, category, tags, prompt,
 【分析题设问】
 （1）为什么说“在旧中国的政治经济社会条件下”，孙中山振兴中华的宏大构想“难以实现”？（5分）
 （2）中国共产党百年奋斗的历史意义是什么？（5分）', NULL, '', 0, '2026-10-05T13:23:32.693555Z', '2026-10-05T13:23:32.693555Z');
-INSERT OR REPLACE INTO essays (id, subject, type, title, category, tags, prompt, prompt_image, content, word_count, created_at, updated_at) VALUES ('real-pol-2022-q37', 'politics', 'defa', '2022年第37题：黄文秀先进事迹与新时代青年的人生态度与使命 (德法)', '', '["2022真题", "第37题", "德法", "黄文秀", "时代楷模", "人生态度", "脱贫攻坚", "青年历史重任"]', '【材料分析题】（10分）
+INSERT OR REPLACE INTO essays (id, subject, type, title, category, tags, prompt, prompt_image, content, word_count, created_at, updated_at) VALUES ('real-pol-2022-q37', 'politics', 'defa', '2022年第37题：黄文秀先进事迹与新时代青年的人生态度与使命 (德法)', '', '["德法-人生观", "德法-青年使命"]', '【材料分析题】（10分）
 
 【背景材料】
 材料1
@@ -409,7 +409,7 @@ INSERT OR REPLACE INTO essays (id, subject, type, title, category, tags, prompt,
 【分析题设问】
 （1）黄文秀的先进事迹启示我们新时代青年应该有怎样的人生态度？（5分）
 （2）一代人有一代人的担当，新时代中国青年应该承担什么样的历史重任？（5分）', NULL, '', 0, '2026-10-05T13:23:32.693555Z', '2026-10-05T13:23:32.693555Z');
-INSERT OR REPLACE INTO essays (id, subject, type, title, category, tags, prompt, prompt_image, content, word_count, created_at, updated_at) VALUES ('real-pol-2022-q38', 'politics', 'dangdai', '2022年第38题：恢复联合国合法席位与践行真正多边主义 (当代)', '', '["2022真题", "第38题", "当代", "恢复联合国合法权利", "真正的多边主义", "国际秩序", "人类命运共同体"]', '【材料分析题】（10分）
+INSERT OR REPLACE INTO essays (id, subject, type, title, category, tags, prompt, prompt_image, content, word_count, created_at, updated_at) VALUES ('real-pol-2022-q38', 'politics', 'dangdai', '2022年第38题：恢复联合国合法席位与践行真正多边主义 (当代)', '', '["当代-联合国与多边主义", "当代-人类命运共同体"]', '【材料分析题】（10分）
 
 【背景材料】
 材料1
