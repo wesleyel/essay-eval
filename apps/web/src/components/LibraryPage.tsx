@@ -11,7 +11,6 @@ import { Providers } from './Providers';
 import { cx, Segmented, useToast } from './ui';
 
 const ALL = '全部';
-const SLOT_CHIPS = ['[topic]', '[reason 1]', '[result]', '[data]', '[scene]'];
 const byUngroupedLast = (a: string, b: string) => Number(a === UNGROUPED) - Number(b === UNGROUPED) || a.localeCompare(b, 'zh-CN');
 const TAB_LABEL: Record<Subject, string> = { english: COPY.english.tab, politics: COPY.politics.tab };
 
@@ -102,7 +101,6 @@ function LibraryBody({ subject, onSubject }: { subject: Subject; onSubject: (sub
     setEssayGroup(next);
     setEssayTag(ALL);
   }
-  const filterLabel = [essayGroup !== ALL && essayGroup, essayTag !== ALL && `#${essayTag}`].filter(Boolean).join(' · ');
 
   const basketItems = basket.map((id) => byId.get(id)).filter((item): item is Template => Boolean(item));
   const sections = POSITIONS.map((position) => ({ ...position, items: basketItems.filter((item) => positionOf(item) === position.name) }));
@@ -260,7 +258,7 @@ function LibraryBody({ subject, onSubject }: { subject: Subject; onSubject: (sub
 
         {/* 搜索 + 结果 */}
         <main className="flex min-h-0 min-w-0 flex-col bg-zinc-100">
-          <div className="flex flex-col gap-3 border-b border-zinc-200 bg-white px-5 pt-4 pb-3.5">
+          <div className="flex flex-col gap-3 bg-white px-5 pt-4 pb-3">
             <label className="flex h-11 items-center gap-2.5 rounded-lg border border-zinc-300 px-3.5 text-zinc-500 focus-within:border-accent">
               <Search className="size-4.5 shrink-0" />
               <input
@@ -277,24 +275,6 @@ function LibraryBody({ subject, onSubject }: { subject: Subject; onSubject: (sub
               )}
               <kbd className="rounded border border-zinc-200 px-1.5 font-mono text-[11px] text-zinc-400">/</kbd>
             </label>
-            <div className="flex flex-wrap items-center gap-1.5 text-xs text-zinc-500">
-              <span>{needle ? `“${search.trim()}” 找到 ${shown.length} 条` : `${shown.length} 条${filterLabel ? ` · ${filterLabel}` : ''} · 按句型聚合`}</span>
-              {groups.map((group) => (
-                <a key={group.name} href={`#g-${group.name}`} className="rounded-full bg-accent-wash px-2 py-0.5 text-[11px] font-bold text-accent-strong hover:bg-accent-soft">
-                  {group.name} {group.items.length}
-                </a>
-              ))}
-              {subject === 'english' && (
-                <>
-                  <span className="ml-auto text-zinc-400">槽位</span>
-                  {SLOT_CHIPS.map((slot) => (
-                    <button key={slot} type="button" className="rounded border border-zinc-200 bg-white px-1.5 py-0.5 font-mono text-[11px] text-accent hover:bg-accent-wash" onClick={() => setSearch(slot)}>
-                      {slot}
-                    </button>
-                  ))}
-                </>
-              )}
-            </div>
           </div>
 
           <div className="flex flex-col gap-2 border-b border-zinc-200 bg-white px-5 pb-3">
