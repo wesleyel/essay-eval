@@ -1,5 +1,5 @@
 /** 行 → 领域对象。只做形状转换，不含业务规则。 */
-import { essayKind, type Essay, type Evaluation, type Inspiration, type Template, type Version } from '@essay/domain';
+import { essayKind, subjectOfType, type Essay, type Evaluation, type Inspiration, type Template, type Version } from '@essay/domain';
 import type { EssayRow, EvaluationRow, InspirationRow, TemplateRow, VersionRow } from './schema';
 
 export function toEssay({ subject, type, ...row }: EssayRow): Essay {
@@ -39,6 +39,7 @@ export type TemplateSourceRow = Pick<EssayRow, 'id' | 'title' | 'type' | 'catego
 export function toTemplate({ sourceEssayId, ...row }: TemplateRow, source: TemplateSourceRow | null | undefined): Template {
   return {
     ...row,
-    source: sourceEssayId && source ? { essayId: source.id, title: source.title, type: source.type, category: source.category, tags: source.tags } : null,
+    // 来源作答与语料不同科目（历史数据遗留）时不算来源，避免语料库里出现别科的分类
+    source: sourceEssayId && source && subjectOfType(source.type) === row.subject ? { essayId: source.id, title: source.title, type: source.type, category: source.category, tags: source.tags } : null,
   };
 }

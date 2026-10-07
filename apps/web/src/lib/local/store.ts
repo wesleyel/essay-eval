@@ -5,6 +5,7 @@ import {
   countWords,
   isTypeOf,
   normalizeTags,
+  subjectOfType,
   patchCategoryError,
   type AIConfig,
   type Backup,
@@ -226,8 +227,9 @@ export const saveInspiration = (essayId: string, report: InspirationReport): Pro
 
 // ---------- 句式库 ----------
 
-const sourceOf = (essay: Essay | undefined): TemplateSource | null =>
-  essay ? { essayId: essay.id, title: essay.title, type: essay.type, category: essay.category, tags: essay.tags } : null;
+/** 来源作答与语料不同科目（历史数据遗留）时不算来源 */
+const sourceOf = (essay: Essay | undefined, subject: Subject): TemplateSource | null =>
+  essay && essay.subject === subject ? { essayId: essay.id, title: essay.title, type: essay.type, category: essay.category, tags: essay.tags } : null;
 
 const listTemplatesIn = async (tx: Tx, subject?: Subject): Promise<Template[]> => {
   const [rows, essays] = await Promise.all([tx.all<TemplateRow>(STORES.templates), tx.all<Essay>(STORES.essays)]);
@@ -235,7 +237,7 @@ const listTemplatesIn = async (tx: Tx, subject?: Subject): Promise<Template[]> =
   return rows
     .filter((row) => !subject || row.subject === subject)
     .sort(byNewest)
-    .map(({ sourceEssayId, ...row }) => ({ ...row, source: sourceOf(sources.get(sourceEssayId ?? '')) }));
+    .map(({ sourceEssayId, ...row }) => ({ ...row, source: sourceOf(sources.get(sourceEssayId ?? ''), row.subject) }));
 };
 
 export const listTemplates = (subject?: Subject) => transaction([STORES.templates, STORES.essays], 'readonly', (tx) => listTemplatesIn(tx, subject));
@@ -258,7 +260,7 @@ export const insertTemplates = (subject: Subject, drafts: (TemplateDraft & { sou
       const row: TemplateRow = { ...draft, id: newId('tpl'), subject, sourceEssayId: source.essayId, createdAt };
       await tx.put(STORES.templates, row);
       const { sourceEssayId: _omit, ...rest } = row;
-      inserted.push({ ...rest, source: sourceOf(await tx.get<Essay>(STORES.essays, source.essayId)) });
+      inserted.push({ ...rest, source: sourceOf(await tx.get<Essay>(STORES.essays, source.essayId), subject) });
     }
     return inserted;
   });
